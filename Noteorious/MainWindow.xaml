@@ -1,0 +1,28 @@
+﻿<Window x:Class="Noteorious.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Noteorious" Height="480" Width="640" MinHeight="240" MinWidth="320">
+    <DockPanel LastChildFill="True">
+        <ToolBarTray Height="26" Name="mToolBarTray" DockPanel.Dock="Top">
+            <ToolBar Name="mToolBarFile">
+                <Button Content="Open" Name="mBtnOpen" Click="mBtnOpen_Click"></Button>
+                <Button Content="Save" Name="mBtnSave" Click="mBtnSave_Click"></Button>
+                <Button Content="Save As" Name="mBtnSaveAs" Click="mBtnSaveAs_Click"></Button>
+            </ToolBar>
+            <ToolBar Name="mOptions">
+                <CheckBox Name="mCBSpellCheck" IsChecked="False" Checked="mCBSpellCheck_Toggle" Unchecked="mCBSpellCheck_Toggle">Spell Check</CheckBox>
+                <CheckBox Name="mCBReadOnly" IsChecked="True" Checked="mCBReadOnly_Toggle" Unchecked="mCBReadOnly_Toggle">Read-Only</CheckBox>
+            </ToolBar>
+        </ToolBarTray>
+        <StatusBar Height="23" Name="mStatBar" DockPanel.Dock="Bottom">
+            <StatusBarItem DockPanel.Dock="Left">
+                <TextBlock Name="mStatText" Text="Ready." />
+            </StatusBarItem>
+        </StatusBar>
+        <TextBox 
+            Name="mTB" Text="Text goes here" SpellCheck.IsEnabled="False" Language="en-US" 
+            AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" 
+            HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" TextChanged="mTB_TextChanged" 
+            />
+    </DockPanel>
+</Window>
