@@ -9,6 +9,8 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using System.Windows.Controls;
 
+// test comment 4:20 pm 8)
+
 namespace Noteorious.Rich_text_controls
 {
 	public partial class RichTextEditorSample : Window
