@@ -8,7 +8,7 @@ namespace Noteorious
     {
         public NoteTab()
         {
-            Name = "Test";
+            Name = DateTime.Now.ToString();
         }
     }
 }

@@ -8,32 +8,58 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
 using System.Windows.Controls;
-
-// test comment 4:20 pm 8)
+using System.Diagnostics;
 
 namespace Noteorious.Rich_text_controls
 {
+	
 	public partial class RichTextEditorSample : Window
 	{
+		public RichTextBox activeBox;
+		List<MyTabItem> tabItems = new List<MyTabItem>();
+
 		public RichTextEditorSample()
 		{
 			InitializeComponent();
 			cmbFontFamily.ItemsSource = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 			cmbFontSize.ItemsSource = new List<double>() { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
+
+			// testing tab stuff
+
+			tabItems.Add(new MyTabItem());
+			tabItems.Add(new MyTabItem());
+
+			TabControl1.ItemsSource = tabItems;
+		}
+
+		private void rtbEditor_Clicked(object sender, RoutedEventArgs e)
+		{
+
+		}
+		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var tc = sender as TabControl;
+
+			if (tc != null)
+			{
+				MyTabItem item = (MyTabItem)tc.SelectedItem;
+				activeBox = item.Content;
+			}
+			
 		}
 
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
 		{
-			object temp = rtbEditor.Selection.GetPropertyValue(Inline.FontWeightProperty);
+			object temp = activeBox.Selection.GetPropertyValue(Inline.FontWeightProperty);
 			btnBold.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(FontWeights.Bold));
-			temp = rtbEditor.Selection.GetPropertyValue(Inline.FontStyleProperty);
+			temp = activeBox.Selection.GetPropertyValue(Inline.FontStyleProperty);
 			btnItalic.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(FontStyles.Italic));
-			temp = rtbEditor.Selection.GetPropertyValue(Inline.TextDecorationsProperty);
+			temp = activeBox.Selection.GetPropertyValue(Inline.TextDecorationsProperty);
 			btnUnderline.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(TextDecorations.Underline));
 
-			temp = rtbEditor.Selection.GetPropertyValue(Inline.FontFamilyProperty);
+			temp = activeBox.Selection.GetPropertyValue(Inline.FontFamilyProperty);
 			cmbFontFamily.SelectedItem = temp;
-			temp = rtbEditor.Selection.GetPropertyValue(Inline.FontSizeProperty);
+			temp = activeBox.Selection.GetPropertyValue(Inline.FontSizeProperty);
 			cmbFontSize.Text = temp.ToString();
 		}
 
@@ -44,7 +70,7 @@ namespace Noteorious.Rich_text_controls
 			if (dlg.ShowDialog() == true)
 			{
 				FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
-				TextRange range = new TextRange(rtbEditor.Document.ContentStart, rtbEditor.Document.ContentEnd);
+				TextRange range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
 				range.Load(fileStream, DataFormats.Rtf);
 			}
 		}
@@ -56,7 +82,7 @@ namespace Noteorious.Rich_text_controls
 			if (dlg.ShowDialog() == true)
 			{
 				FileStream fileStream = new FileStream(dlg.FileName, FileMode.Create);
-				TextRange range = new TextRange(rtbEditor.Document.ContentStart, rtbEditor.Document.ContentEnd);
+				TextRange range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
 				range.Save(fileStream, DataFormats.Rtf);
 			}
 		}
@@ -64,12 +90,13 @@ namespace Noteorious.Rich_text_controls
 		private void cmbFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (cmbFontFamily.SelectedItem != null)
-				rtbEditor.Selection.ApplyPropertyValue(Inline.FontFamilyProperty, cmbFontFamily.SelectedItem);
+				activeBox.Selection.ApplyPropertyValue(Inline.FontFamilyProperty, cmbFontFamily.SelectedItem);
 		}
 
 		private void cmbFontSize_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			rtbEditor.Selection.ApplyPropertyValue(Inline.FontSizeProperty, cmbFontSize.Text);
+			activeBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, cmbFontSize.Text);
 		}
+
 	}
 }

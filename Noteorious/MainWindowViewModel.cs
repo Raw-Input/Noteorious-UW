@@ -9,6 +9,7 @@
         {
             NewTabCommand = new ActionCommand(p => NewTab());
             Tabs = new ObservableCollection<ITab>();
+            Tabs.Add(new NoteTab());
         }
         
         public ICommand NewTabCommand { get; }

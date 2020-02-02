@@ -34,12 +34,10 @@
             <ComboBox Name="cmbFontFamily" Width="150" SelectionChanged="cmbFontFamily_SelectionChanged" />
             <ComboBox Name="cmbFontSize" Width="50" IsEditable="True" TextBoxBase.TextChanged="cmbFontSize_TextChanged" />
         </ToolBar>
-        <RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged"/>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+        <!--<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Button Command="{Binding NewTabCommand}" Margin="0,0,12,0">New Tab</Button>
         </StackPanel>
-        
-        <!--<TabControl ItemsSource="{Binding Tabs}">
+        <TabControl ItemsSource="{Binding Tabs}">
             <TabControl.Resources>
                 <DataTemplate DataType="{x:Type tabs:NoteTab}">
                     <tabs:NoteTabView/>
@@ -52,7 +50,25 @@
                         <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
                     </TextBlock>
                 </DataTemplate>
-            </TabControl.ItemTemplate>
+            </TabControl.ItemTemplate> 
         </TabControl>-->
+        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="Header" Value="{Binding Header}" />
+                    <Setter Property="Content" Value="{Binding Content}" />
+                </Style>
+            </TabControl.ItemContainerStyle>
+        </TabControl>
+        <!--<TabItem Header="Note 1">
+                <RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged"/>
+            </TabItem>
+            <TabItem Header="Note 2" >
+                <RichTextBox Name="rtbEditor2" SelectionChanged="rtbEditor_SelectionChanged"/>
+            </TabItem>
+            <TabItem Header="Note 3" >
+                <RichTextBox Name="rtbEditor3" SelectionChanged="rtbEditor_SelectionChanged"/>
+            </TabItem>-->
+        <!--<RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged" Height="1" Width="1"/>-->   
     </DockPanel>
 </Window>
