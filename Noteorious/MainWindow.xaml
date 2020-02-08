@@ -52,13 +52,37 @@
                 </DataTemplate>
             </TabControl.ItemTemplate> 
         </TabControl>-->
-        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged">
-            <TabControl.ItemContainerStyle>
+        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged" >
+            <TabControl.Resources>
                 <Style TargetType="TabItem">
-                    <Setter Property="Header" Value="{Binding Header}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#07df64" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
+                                    <StackPanel Orientation="Horizontal" Margin="6,4,6,4">
+                                        <Label Grid.Row="0" Name="Text" Foreground="Black" Content="{Binding Header}"/>
+                                        <Image Name="img" Height="15" Width="15" Margin="0,0,4,0" Source="close.png" MouseUp="close_MouseUp" />
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#e37e6e" />
+                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="White"/>
+                                        <Setter TargetName="Text" Property="TextBlock.FontWeight" Value="Bold"/>
+                                        <Setter TargetName="Border" Property="Margin" Value="1,1,1,-4"/>
+                                        <Setter TargetName="Border" Property="Padding" Value="2"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="#c83620"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                     <Setter Property="Content" Value="{Binding Content}" />
+                    <!--<Setter Property="Close" Value="{Binding Close}"></Setter>-->
                 </Style>
-            </TabControl.ItemContainerStyle>
+            </TabControl.Resources>
         </TabControl>
         <!--<TabItem Header="Note 1">
                 <RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged"/>

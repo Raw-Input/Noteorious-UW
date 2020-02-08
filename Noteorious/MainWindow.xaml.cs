@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace Noteorious.Rich_text_controls
 {
@@ -16,7 +17,7 @@ namespace Noteorious.Rich_text_controls
 	public partial class RichTextEditorSample : Window
 	{
 		public RichTextBox activeBox;
-		List<MyTabItem> tabItems = new List<MyTabItem>();
+		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>();
 
 		public RichTextEditorSample()
 		{
@@ -26,6 +27,9 @@ namespace Noteorious.Rich_text_controls
 
 			// testing tab stuff
 
+			tabItems.Add(new MyTabItem());
+			tabItems.Add(new MyTabItem());
+			tabItems.Add(new MyTabItem());
 			tabItems.Add(new MyTabItem());
 			tabItems.Add(new MyTabItem());
 
@@ -45,7 +49,16 @@ namespace Noteorious.Rich_text_controls
 				MyTabItem item = (MyTabItem)tc.SelectedItem;
 				activeBox = item.Content;
 			}
-			
+		}
+
+		private void close_MouseUp(object sender, RoutedEventArgs e)
+		{
+
+			if (tabItems.Count > 1 )
+			{
+				TabControl1.SelectedIndex += 1;
+				tabItems.RemoveAt(TabControl1.SelectedIndex-1);
+			} 
 		}
 
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
@@ -98,5 +111,9 @@ namespace Noteorious.Rich_text_controls
 			activeBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, cmbFontSize.Text);
 		}
 
+		private void img_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+
+		}
 	}
 }
