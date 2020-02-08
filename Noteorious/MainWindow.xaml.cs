@@ -54,11 +54,15 @@ namespace Noteorious.Rich_text_controls
 		private void close_MouseUp(object sender, RoutedEventArgs e)
 		{
 
-			if (tabItems.Count > 1 )
+			if (tabItems.Count > 1 && TabControl1.SelectedIndex == tabItems.Count-1)
+			{
+				TabControl1.SelectedIndex -= 1;
+				tabItems.RemoveAt(TabControl1.SelectedIndex + 1);
+			} else if (tabItems.Count > 1)
 			{
 				TabControl1.SelectedIndex += 1;
-				tabItems.RemoveAt(TabControl1.SelectedIndex-1);
-			} 
+				tabItems.RemoveAt(TabControl1.SelectedIndex - 1);
+			}
 		}
 
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)

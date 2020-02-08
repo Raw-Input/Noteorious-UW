@@ -12,8 +12,8 @@
         <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
     </Window.CommandBindings>
-    <DockPanel>
-        <ToolBar DockPanel.Dock="Top">
+    <DockPanel Background="#35393f">
+        <ToolBar DockPanel.Dock="Top" Background="#b6bcc3">
             <Button Command="ApplicationCommands.Open">
                 <Image Source="folder.png" Width="50" Height="50" />
             </Button>
@@ -52,28 +52,30 @@
                 </DataTemplate>
             </TabControl.ItemTemplate> 
         </TabControl>-->
-        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged" >
+        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged" Background="Black">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="TabItem">
-                                <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#07df64" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
+                                <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#6da03c" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
                                     <StackPanel Orientation="Horizontal" Margin="6,4,6,4">
                                         <Label Grid.Row="0" Name="Text" Foreground="Black" Content="{Binding Header}"/>
-                                        <Image Name="img" Height="15" Width="15" Margin="0,0,4,0" Source="close.png" MouseUp="close_MouseUp" />
+                                        <Image Name="img" Height="15" Width="15" Margin="10,0,0,20" Source="close2.png" MouseUp="close_MouseUp"/>
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="#e37e6e" />
-                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="White"/>
+                                        <Setter TargetName="Border" Property="Background" Value="#b6bcc3" />
+                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="Black"/>
                                         <Setter TargetName="Text" Property="TextBlock.FontWeight" Value="Bold"/>
+                                        <Setter TargetName="Text" Property="Margin" Value="20,10,10,10"/>
                                         <Setter TargetName="Border" Property="Margin" Value="1,1,1,-4"/>
                                         <Setter TargetName="Border" Property="Padding" Value="2"/>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
-                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="#c83620"/>
+                                        <Setter TargetName="Text" Property="TextBlock.Foreground" Value="White"/>
+                                        <Setter TargetName="Text" Property="Margin" Value="20,10,10,10"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

@@ -12,6 +12,7 @@
   <ItemGroup>
     <None Remove="bold.png" />
     <None Remove="close.png" />
+    <None Remove="close2.png" />
     <None Remove="folder.png" />
     <None Remove="images\bold.png" />
     <None Remove="images\close.png" />
@@ -27,11 +28,9 @@
   <ItemGroup>
     <Resource Include="bold.png" />
     <Resource Include="close.png" />
+    <Resource Include="close2.png" />
     <Resource Include="folder.png" />
     <Resource Include="images\bold.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="images\close.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\folder.png">
