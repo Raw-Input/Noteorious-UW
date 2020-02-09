@@ -14,6 +14,16 @@
     </Window.CommandBindings>
     <DockPanel Background="#35393f">
         <ToolBar DockPanel.Dock="Top" Background="#b6bcc3">
+            <TextBlock Text="Noteorious" FontFamily="Helvetica" FontSize="70" Foreground="#6da03c" Margin="50,0,50,0">
+                <TextBlock.Effect>
+                    <DropShadowEffect
+                         ShadowDepth="4"
+                         Direction="330"
+                         Color="White"
+                         Opacity="0.5"
+                         BlurRadius="4"/>
+                </TextBlock.Effect>
+            </TextBlock>
             <Button Command="ApplicationCommands.Open">
                 <Image Source="folder.png" Width="50" Height="50" />
             </Button>

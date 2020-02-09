@@ -35,6 +35,7 @@ namespace Noteorious.Rich_text_controls
 			TabControl1.ItemsSource = tabItems;
 		}
 
+		// adds a new blank tab
 		private void addTab()
 		{
 			MyTabItem newTab = new MyTabItem();
@@ -42,6 +43,7 @@ namespace Noteorious.Rich_text_controls
 			tabItems.Add(newTab);
 		}
 
+		// adds a new tab with a name of String s
 		private void addTab(String s)
 		{
 			MyTabItem newTab = new MyTabItem(s);
@@ -64,6 +66,7 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		// Handles context menu events
 		public void HandleIt(object sender, EventArgs e)
 		{
 			addTab(tabItems[TabControl1.SelectedIndex].Content.Selection.Text);
