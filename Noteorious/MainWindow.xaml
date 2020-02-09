@@ -81,20 +81,13 @@
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Content" Value="{Binding Content}" />
-                    <!--<Setter Property="Close" Value="{Binding Close}"></Setter>-->
+                    <Setter Property="Content" Value="{Binding Content}" >
+                        
+                    </Setter>
+
+
                 </Style>
             </TabControl.Resources>
         </TabControl>
-        <!--<TabItem Header="Note 1">
-                <RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged"/>
-            </TabItem>
-            <TabItem Header="Note 2" >
-                <RichTextBox Name="rtbEditor2" SelectionChanged="rtbEditor_SelectionChanged"/>
-            </TabItem>
-            <TabItem Header="Note 3" >
-                <RichTextBox Name="rtbEditor3" SelectionChanged="rtbEditor_SelectionChanged"/>
-            </TabItem>-->
-        <!--<RichTextBox Name="rtbEditor" SelectionChanged="rtbEditor_SelectionChanged" Height="1" Width="1"/>-->   
     </DockPanel>
 </Window>

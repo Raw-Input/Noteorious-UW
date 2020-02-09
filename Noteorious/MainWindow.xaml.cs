@@ -26,14 +26,27 @@ namespace Noteorious.Rich_text_controls
 			cmbFontSize.ItemsSource = new List<double>() { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
 
 			// testing tab stuff
-
-			tabItems.Add(new MyTabItem());
-			tabItems.Add(new MyTabItem());
-			tabItems.Add(new MyTabItem());
-			tabItems.Add(new MyTabItem());
-			tabItems.Add(new MyTabItem());
+			addTab();
+			addTab();
+			addTab();
+			addTab();
+			addTab();
 
 			TabControl1.ItemsSource = tabItems;
+		}
+
+		private void addTab()
+		{
+			MyTabItem newTab = new MyTabItem();
+			newTab.ContextMenuUpdate += HandleIt;
+			tabItems.Add(newTab);
+		}
+
+		private void addTab(String s)
+		{
+			MyTabItem newTab = new MyTabItem(s);
+			newTab.ContextMenuUpdate += HandleIt;
+			tabItems.Add(newTab);
 		}
 
 		private void rtbEditor_Clicked(object sender, RoutedEventArgs e)
@@ -51,6 +64,12 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		public void HandleIt(object sender, EventArgs e)
+		{
+			addTab(tabItems[TabControl1.SelectedIndex].Content.Selection.Text);
+			TabControl1.SelectedIndex = tabItems.Count - 1;
+		}
+
 		private void close_MouseUp(object sender, RoutedEventArgs e)
 		{
 
@@ -64,6 +83,8 @@ namespace Noteorious.Rich_text_controls
 				tabItems.RemoveAt(TabControl1.SelectedIndex - 1);
 			}
 		}
+
+
 
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
 		{
