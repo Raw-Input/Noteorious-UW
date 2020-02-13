@@ -3,18 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:classes="clr-namespace:Noteorious.ShellClasses"
         xmlns:mvvm="clr-namespace:Noteorious"
         xmlns:tabs="clr-namespace:Noteorious"
         mc:Ignorable="d"
         Title="Noteorious" Height="720" Width="1280">
-        
+
+    <!--    [Main Dock]    -->
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
     </Window.CommandBindings>
     <DockPanel Background="#35393f">
         <ToolBar DockPanel.Dock="Top" Background="#b6bcc3">
-            <TextBlock Text="Noteorious" FontFamily="Helvetica" FontSize="70" Foreground="#6da03c" Margin="50,0,50,0">
+            <TextBlock Text="Noteorious" FontFamily="Helvetica" FontSize="70" Foreground="#6da03c" Margin="50,0,50,0" FontWeight="Bold">
                 <TextBlock.Effect>
                     <DropShadowEffect
                          ShadowDepth="4"
@@ -25,44 +27,47 @@
                 </TextBlock.Effect>
             </TextBlock>
             <Button Command="ApplicationCommands.Open">
-                <Image Source="folder.png" Width="50" Height="50" />
+                <Image Source="folder.png" Width="25" Height="25" />
             </Button>
             <Button Command="ApplicationCommands.Save">
-                <Image Source="save.png" Width="50" Height="50" />
+                <Image Source="save.png" Width="25" Height="25" />
             </Button>
             <Separator />
             <ToggleButton Command="EditingCommands.ToggleBold" Name="btnBold">
-                <Image Source="bold.png" Width="50" Height="50" />
+                <Image Source="bold.png" Width="20" Height="20" />
             </ToggleButton>
             <ToggleButton Command="EditingCommands.ToggleItalic" Name="btnItalic">
-                <Image Source="italic.png" Width="50" Height="50" />
+                <Image Source="italic.png" Width="25" Height="25" />
             </ToggleButton>
             <ToggleButton Command="EditingCommands.ToggleUnderline" Name="btnUnderline">
-                <Image Source="underline.png" Width="50" Height="50" />
+                <Image Source="underline.png" Width="25" Height="25" />
             </ToggleButton>
             <Separator />
             <ComboBox Name="cmbFontFamily" Width="150" SelectionChanged="cmbFontFamily_SelectionChanged" />
             <ComboBox Name="cmbFontSize" Width="50" IsEditable="True" TextBoxBase.TextChanged="cmbFontSize_TextChanged" />
         </ToolBar>
-        <!--<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button Command="{Binding NewTabCommand}" Margin="0,0,12,0">New Tab</Button>
-        </StackPanel>
-        <TabControl ItemsSource="{Binding Tabs}">
-            <TabControl.Resources>
-                <DataTemplate DataType="{x:Type tabs:NoteTab}">
-                    <tabs:NoteTabView/>
-                </DataTemplate>
-            </TabControl.Resources>
-            <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type mvvm:ITab}">
-                    <TextBlock>
-                        <Run Text="{Binding Name}"/>
-                        <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
-                    </TextBlock>
-                </DataTemplate>
-            </TabControl.ItemTemplate> 
-        </TabControl>-->
-        <TabControl x:Name="TabControl1" Margin="10" SelectionChanged="TabControl_SelectionChanged" Background="Black">
+
+        <!--    [File Tree]    -->
+        <TreeView Name="treeView" Margin="10,10,5,10" Width="200" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
+                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+
+        <!--    [Text & Tabs Block]    -->
+        <TabControl x:Name="TabControl1" Margin="5,10,10,10" SelectionChanged="TabControl_SelectionChanged" Background="Black" RenderTransformOrigin="0.5,0.5" Width="1036" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="Black">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">
@@ -92,7 +97,7 @@
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Content" Value="{Binding Content}" >
-                        
+
                     </Setter>
 
 

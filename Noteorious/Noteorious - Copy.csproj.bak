@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x86</Platforms>
     <ApplicationIcon />
@@ -23,12 +23,6 @@
     <None Remove="italic.png" />
     <None Remove="save.png" />
     <None Remove="underline.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>

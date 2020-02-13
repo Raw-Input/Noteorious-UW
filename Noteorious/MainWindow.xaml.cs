@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using Noteorious.ShellClasses;
 
 namespace Noteorious.Rich_text_controls
 {
@@ -33,6 +34,9 @@ namespace Noteorious.Rich_text_controls
 			addTab();
 
 			TabControl1.ItemsSource = tabItems;
+
+			// tree view init
+			InitializeFileSystemObjects();
 		}
 
 		// adds a new blank tab
@@ -88,7 +92,6 @@ namespace Noteorious.Rich_text_controls
 		}
 
 
-
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
 		{
 			object temp = activeBox.Selection.GetPropertyValue(Inline.FontWeightProperty);
@@ -142,6 +145,30 @@ namespace Noteorious.Rich_text_controls
 		private void img_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 
+		}
+
+		// File tree methods test
+
+		private void InitializeFileSystemObjects()
+		{
+			var drives = DriveInfo.GetDrives();
+			DriveInfo.GetDrives().ToList().ForEach(drive =>
+			{
+				var fileSystemObject = new FileSystemObjectInfo(drive);
+				fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;
+				fileSystemObject.AfterExplore += FileSystemObject_AfterExplore;
+				treeView.Items.Add(fileSystemObject);
+			});
+		}
+
+		private void FileSystemObject_AfterExplore(object sender, System.EventArgs e)
+		{
+			Cursor = Cursors.Arrow;
+		}
+
+		private void FileSystemObject_BeforeExplore(object sender, System.EventArgs e)
+		{
+			Cursor = Cursors.Wait;
 		}
 	}
 }
