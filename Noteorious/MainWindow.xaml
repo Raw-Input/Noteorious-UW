@@ -8,7 +8,10 @@
         xmlns:tabs="clr-namespace:Noteorious"
         mc:Ignorable="d"
         Title="Noteorious" Height="720" Width="1280">
-
+ 
+    
+    <!--test comment-->
+    
     <!--    [Main Dock]    -->
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
@@ -30,7 +33,7 @@
                 <Image Source="folder.png" Width="25" Height="25" />
             </Button>
             <Button Command="ApplicationCommands.Save">
-                <Image Source="save.png" Width="25" Height="25" />
+                <Image Source="save.png" Width="25" Height="25"  />
             </Button>
             <Separator />
             <ToggleButton Command="EditingCommands.ToggleBold" Name="btnBold">
@@ -39,7 +42,7 @@
             <ToggleButton Command="EditingCommands.ToggleItalic" Name="btnItalic">
                 <Image Source="italic.png" Width="25" Height="25" />
             </ToggleButton>
-            <ToggleButton Command="EditingCommands.ToggleUnderline" Name="btnUnderline">
+            <ToggleButton Command="EditingCommands.ToggleUnderline" Name="btnUnderline" >
                 <Image Source="underline.png" Width="25" Height="25" />
             </ToggleButton>
             <Separator />
