@@ -20,7 +20,7 @@
     <DockPanel Background="#35393f">
         <ToolBar DockPanel.Dock="Top" Background="#b6bcc3">
             <Image Source="images/NoteoriousLogo.png" Width="200" Height="40" Margin ="0, 2, 20, 2" />
-            
+         <!--icons - adding to the repos/noteorious?-->   
             <Button Command="ApplicationCommands.Open">
                 <Image Source="images/file.png" Width="35" Height="35" />
             </Button>
