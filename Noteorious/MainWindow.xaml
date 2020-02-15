@@ -19,18 +19,10 @@
     </Window.CommandBindings>
     <DockPanel Background="#35393f">
         <ToolBar DockPanel.Dock="Top" Background="#b6bcc3">
-            <TextBlock Text="Noteorious" FontFamily="Helvetica" FontSize="70" Foreground="#6da03c" Margin="50,0,50,0" FontWeight="Bold">
-                <TextBlock.Effect>
-                    <DropShadowEffect
-                         ShadowDepth="4"
-                         Direction="330"
-                         Color="White"
-                         Opacity="0.5"
-                         BlurRadius="4"/>
-                </TextBlock.Effect>
-            </TextBlock>
+            <Image Source="images/NoteoriousLogo.png" Width="200" Height="40" Margin ="0, 2, 20, 2" />
+            
             <Button Command="ApplicationCommands.Open">
-                <Image Source="folder.png" Width="25" Height="25" />
+                <Image Source="images/file.png" Width="25" Height="25" />
             </Button>
             <Button Command="ApplicationCommands.Save">
                 <Image Source="save.png" Width="25" Height="25"  />
