@@ -16,7 +16,6 @@
     <None Remove="folder.png" />
     <None Remove="images\bold.png" />
     <None Remove="images\close.png" />
-    <None Remove="images\file.png" />
     <None Remove="images\folder.png" />
     <None Remove="images\italic.png" />
     <None Remove="images\NoteoriousLogo.png" />
@@ -28,9 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="images\file.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="images\NoteoriousLogo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
