@@ -18,11 +18,18 @@
     <None Remove="images\close.png" />
     <None Remove="images\folder.png" />
     <None Remove="images\italic.png" />
+    <None Remove="images\NoteoriousLogo.png" />
     <None Remove="images\save.png" />
     <None Remove="images\underline.png" />
     <None Remove="italic.png" />
     <None Remove="save.png" />
     <None Remove="underline.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\NoteoriousLogo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
