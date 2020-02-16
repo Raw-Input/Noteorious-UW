@@ -43,7 +43,8 @@ namespace Noteorious.Rich_text_controls
 		private void addTab()
 		{
 			MyTabItem newTab = new MyTabItem();
-			newTab.ContextMenuUpdate += HandleIt;
+			newTab.ContextMenuUpdate += HandleContextMenu;
+			newTab.NoteLinkUpdate += HandleNoteLink;
 			tabItems.Add(newTab);
 		}
 
@@ -51,14 +52,10 @@ namespace Noteorious.Rich_text_controls
 		private void addTab(String s)
 		{
 			MyTabItem newTab = new MyTabItem(s);
-			newTab.ContextMenuUpdate += HandleIt;
+			newTab.ContextMenuUpdate += HandleContextMenu;
 			tabItems.Add(newTab);
 		}
 
-		private void rtbEditor_Clicked(object sender, RoutedEventArgs e)
-		{
-
-		}
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var tc = sender as TabControl;
@@ -71,9 +68,16 @@ namespace Noteorious.Rich_text_controls
 		}
 
 		// Handles context menu events
-		public void HandleIt(object sender, EventArgs e)
+		public void HandleContextMenu(object sender, MenuItem item)
 		{
 			addTab(tabItems[TabControl1.SelectedIndex].Content.Selection.Text);
+			tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection);
+			TabControl1.SelectedIndex = tabItems.Count - 1;
+		}
+
+		public void HandleNoteLink(object sender, Hyperlink h)
+		{
+			addTab(new TextRange(h.ContentStart, h.ContentEnd).Text);
 			TabControl1.SelectedIndex = tabItems.Count - 1;
 		}
 
