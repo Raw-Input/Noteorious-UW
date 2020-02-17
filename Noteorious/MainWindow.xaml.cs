@@ -28,10 +28,6 @@ namespace Noteorious.Rich_text_controls
 
 			// testing tab stuff
 			addTab();
-			addTab();
-			addTab();
-			addTab();
-			addTab();
 
 			TabControl1.ItemsSource = tabItems;
 
@@ -53,6 +49,7 @@ namespace Noteorious.Rich_text_controls
 		{
 			MyTabItem newTab = new MyTabItem(s);
 			newTab.ContextMenuUpdate += HandleContextMenu;
+			newTab.NoteLinkUpdate += HandleNoteLink;
 			tabItems.Add(newTab);
 		}
 
@@ -67,18 +64,53 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
-		// Handles context menu events
+		// Handles making a new note + link via the context menu
 		public void HandleContextMenu(object sender, MenuItem item)
 		{
-			addTab(tabItems[TabControl1.SelectedIndex].Content.Selection.Text);
+			String headerText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text;
+			addTab(headerText);
 			tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection);
+			
+
+			// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
+			SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + headerText + ".noto");
+
+			// Update our tab position
 			TabControl1.SelectedIndex = tabItems.Count - 1;
+
+			tabItems[TabControl1.SelectedIndex].Header = headerText;
+
+
 		}
 
 		public void HandleNoteLink(object sender, Hyperlink h)
 		{
-			addTab(new TextRange(h.ContentStart, h.ContentEnd).Text);
-			TabControl1.SelectedIndex = tabItems.Count - 1;
+			var files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "*").Select(f => Path.GetFileName(f));
+			if (files.Contains(System.IO.Path.GetFileName(h.NavigateUri.OriginalString))) {
+				bool trigger = false;
+				for (int i = 0; i < tabItems.Count; i++)
+				{
+					if (tabItems[i].Header == System.IO.Path.GetFileNameWithoutExtension(h.NavigateUri.OriginalString))
+					{
+						trigger = true;
+						TabControl1.SelectedIndex = i;
+					}
+				}
+				if (!trigger)
+				{
+					addTab(new TextRange(h.ContentStart, h.ContentEnd).Text);
+					TabControl1.SelectedIndex = tabItems.Count - 1;
+					LoadXamlPackage(h.NavigateUri.LocalPath);
+				}
+				
+			} else
+			{
+				addTab(new TextRange(h.ContentStart, h.ContentEnd).Text);
+				TabControl1.SelectedIndex = tabItems.Count - 1;
+				LoadXamlPackage(h.NavigateUri.LocalPath);
+			}
+			
+			
 		}
 
 		private void close_MouseUp(object sender, RoutedEventArgs e)
@@ -104,7 +136,6 @@ namespace Noteorious.Rich_text_controls
 			btnItalic.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(FontStyles.Italic));
 			temp = activeBox.Selection.GetPropertyValue(Inline.TextDecorationsProperty);
 			btnUnderline.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(TextDecorations.Underline));
-
 			temp = activeBox.Selection.GetPropertyValue(Inline.FontFamilyProperty);
 			cmbFontFamily.SelectedItem = temp;
 			temp = activeBox.Selection.GetPropertyValue(Inline.FontSizeProperty);
@@ -114,26 +145,63 @@ namespace Noteorious.Rich_text_controls
 		private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "Rich Text Format (*.rtf)|*.rtf|All files (*.*)|*.*";
+			dlg.Filter = "Noteorious Note (*.noto)|*.noto|All files (*.*)|*.*";
 			if (dlg.ShowDialog() == true)
 			{
-				FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
-				TextRange range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
-				range.Load(fileStream, DataFormats.Rtf);
+				LoadXamlPackage(dlg.FileName);
+				tabItems[TabControl1.SelectedIndex].Header = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
 			}
 		}
 
 		private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SaveFileDialog dlg = new SaveFileDialog();
-			dlg.Filter = "Rich Text Format (*.rtf)|*.rtf|All files (*.*)|*.*";
-			if (dlg.ShowDialog() == true)
+			if (tabItems[TabControl1.SelectedIndex].Header != "New Note")
 			{
-				FileStream fileStream = new FileStream(dlg.FileName, FileMode.Create);
-				TextRange range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
-				range.Save(fileStream, DataFormats.Rtf);
+				SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + tabItems[TabControl1.SelectedIndex].Header + ".noto");
+			} else
+			{
+				SaveFileDialog dlg = new SaveFileDialog();
+				dlg.Filter = "Noteorious Note (*.noto)|*.noto|All files (*.*)|*.*";
+				if (dlg.ShowDialog() == true)
+				{
+					SaveXamlPackage(dlg.FileName);
+				}
 			}
+			
 		}
+
+
+		private void SaveXamlPackage(string filePath)
+		{
+			var range = new TextRange(activeBox.Document.ContentStart,
+				activeBox.Document.ContentEnd);
+			var fStream = new FileStream(filePath, FileMode.Create);
+			range.Save(fStream, DataFormats.XamlPackage);
+			fStream.Close();
+		}
+
+		void LoadXamlPackage(string filePath)
+		{
+			if (File.Exists(filePath))
+			{
+				var range = new TextRange(activeBox.Document.ContentStart,
+					activeBox.Document.ContentEnd);
+				var fStream = new FileStream(filePath, FileMode.OpenOrCreate);
+				range.Load(fStream, DataFormats.XamlPackage);
+				fStream.Close();
+
+				foreach (var paragraph in activeBox.Document.Blocks.OfType<Paragraph>())
+				{
+					foreach (var hyperlink in paragraph.Inlines.OfType<Hyperlink>())
+					{
+						tabItems[TabControl1.SelectedIndex].createHyperLink(hyperlink);
+					}
+				}
+			}
+
+			
+		}
+
 
 		private void cmbFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
