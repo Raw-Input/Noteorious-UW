@@ -10,7 +10,7 @@
         Title="Noteorious" Height="720" Width="1280">
  
     
-    <!--test comment-->
+    <!--test-->
     
     <!--    [Main Dock]    -->
     <Window.CommandBindings>
@@ -25,17 +25,17 @@
                 <Image Source="images/file.png" Width="35" Height="35" />
             </Button>
             <Button Command="ApplicationCommands.Save">
-                <Image Source="save.png" Width="25" Height="25"  />
+                <Image Source="saveicon.png" Width="25" Height="25"  />
             </Button>
             <Separator />
             <ToggleButton Command="EditingCommands.ToggleBold" Name="btnBold">
-                <Image Source="bold.png" Width="20" Height="20" />
+                <Image Source="boldicon.png" Width="20" Height="20" />
             </ToggleButton>
             <ToggleButton Command="EditingCommands.ToggleItalic" Name="btnItalic">
-                <Image Source="italic.png" Width="25" Height="25" />
+                <Image Source="italicicon.png" Width="25" Height="25" />
             </ToggleButton>
             <ToggleButton Command="EditingCommands.ToggleUnderline" Name="btnUnderline" >
-                <Image Source="underline.png" Width="25" Height="25" />
+                <Image Source="underlineicon.png" Width="25" Height="25" />
             </ToggleButton>
             <Separator />
             <ComboBox Name="cmbFontFamily" Width="150" SelectionChanged="cmbFontFamily_SelectionChanged" />

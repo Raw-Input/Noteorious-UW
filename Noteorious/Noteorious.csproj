@@ -15,20 +15,30 @@
     <None Remove="close2.png" />
     <None Remove="folder.png" />
     <None Remove="images\bold.png" />
+    <None Remove="images\boldicon.PNG" />
     <None Remove="images\close.png" />
     <None Remove="images\file.png" />
     <None Remove="images\folder.png" />
     <None Remove="images\italic.png" />
+    <None Remove="images\italicicon.PNG" />
     <None Remove="images\NoteoriousLogo.png" />
     <None Remove="images\save.png" />
+    <None Remove="images\saveicon.png" />
     <None Remove="images\underline.png" />
+    <None Remove="images\underlineicon.PNG" />
     <None Remove="italic.png" />
     <None Remove="save.png" />
     <None Remove="underline.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="images\boldicon.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="images\file.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\italicicon.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="images\NoteoriousLogo.png">
@@ -59,7 +69,13 @@
     <Resource Include="images\save.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="images\saveicon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="images\underline.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\underlineicon.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="italic.png" />
