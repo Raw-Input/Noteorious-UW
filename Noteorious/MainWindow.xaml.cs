@@ -18,18 +18,22 @@ namespace Noteorious.Rich_text_controls
 	
 	public partial class RichTextEditorSample : Window
 	{
-		public RichTextBox activeBox;
-		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>();
+		public RichTextBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
+		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>(); // stores a list of all the tabs currently loaded by the program
 
 		public RichTextEditorSample()
 		{
+			// init editor
 			InitializeComponent();
+
+			// font sizes and families
 			cmbFontFamily.ItemsSource = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 			cmbFontSize.ItemsSource = new List<double>() { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
 
-			// testing tab stuff
+			// open a blank tab at the start
 			addTab();
 
+			// Our tabcontrol will get its tabs from the tabItems collection
 			TabControl1.ItemsSource = tabItems;
 
 			// tree view init
@@ -40,20 +44,21 @@ namespace Noteorious.Rich_text_controls
 		private void addTab()
 		{
 			MyTabItem newTab = new MyTabItem();
-			newTab.ContextMenuUpdate += HandleContextMenu;
-			newTab.NoteLinkUpdate += HandleNoteLink;
-			tabItems.Add(newTab);
+			newTab.ContextMenuUpdate += HandleContextMenu; // event handler
+			newTab.NoteLinkUpdate += HandleNoteLink; // event handler
+			tabItems.Add(newTab); // add to collection
 		}
 
 		// adds a new tab with a name of String s
 		private void addTab(String s)
 		{
-			MyTabItem newTab = new MyTabItem(s);
-			newTab.ContextMenuUpdate += HandleContextMenu;
-			newTab.NoteLinkUpdate += HandleNoteLink;
-			tabItems.Add(newTab);
+			MyTabItem newTab = new MyTabItem(s); 
+			newTab.ContextMenuUpdate += HandleContextMenu; // event handler
+			newTab.NoteLinkUpdate += HandleNoteLink; // event handler
+			tabItems.Add(newTab); // add to collection
 		}
 
+		// fires when a new tab is selected
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var tc = sender as TabControl;
@@ -61,16 +66,16 @@ namespace Noteorious.Rich_text_controls
 			if (tc != null)
 			{
 				MyTabItem item = (MyTabItem)tc.SelectedItem;
-				activeBox = item.Content;
+				activeBox = item.Content; 
 			}
 		}
 
 		// Handles making a new note + link via the context menu
 		public void HandleContextMenu(object sender, MenuItem item)
 		{
-			String headerText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text;
-			addTab(headerText);
-			tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection);
+			String headerText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text; 
+			addTab(headerText); // whatever was selected by the user is set as the header of the new tab
+			tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection); // make the selected text link to the new tab
 			
 
 			// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
@@ -84,8 +89,10 @@ namespace Noteorious.Rich_text_controls
 
 		}
 
+		// Handles making a hyperlink between two notes
 		public void HandleNoteLink(object sender, Hyperlink h)
 		{
+			// get all the files in the user's documents and search for a match with the sent hyper link
 			var files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "*").Select(f => Path.GetFileName(f));
 			if (files.Contains(System.IO.Path.GetFileName(h.NavigateUri.OriginalString))) {
 				bool trigger = false;
@@ -114,6 +121,7 @@ namespace Noteorious.Rich_text_controls
 			
 		}
 
+		// Fires whenever the X of a tab is clicked, closes the tab
 		private void close_MouseUp(object sender, RoutedEventArgs e)
 		{
 
@@ -129,6 +137,7 @@ namespace Noteorious.Rich_text_controls
 		}
 
 
+		// Handles when the font changes via the selection box
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
 		{
 			object temp = activeBox.Selection.GetPropertyValue(Inline.FontWeightProperty);
@@ -143,6 +152,7 @@ namespace Noteorious.Rich_text_controls
 			cmbFontSize.Text = temp.ToString();
 		}
 
+		// Fires when clicking the open button at the top of the app
 		private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
@@ -155,12 +165,13 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		// Fires when clicking the save button at the top of the app
 		private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (tabItems[TabControl1.SelectedIndex].Header != "New Note")
+			if (tabItems[TabControl1.SelectedIndex].Header != "New Note") // if the app has been saved / already exists, save the file dynamically
 			{
 				SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + tabItems[TabControl1.SelectedIndex].Header + ".noto");
-			} else
+			} else // otherwise let the user choose what to save the file as
 			{
 				SaveFileDialog dlg = new SaveFileDialog();
 				dlg.Filter = "Noteorious Note (*.noto)|*.noto|All files (*.*)|*.*";
@@ -173,6 +184,7 @@ namespace Noteorious.Rich_text_controls
 		}
 
 
+		// saves the current tab's rich text box to a specified filepath
 		private void SaveXamlPackage(string filePath)
 		{
 			var range = new TextRange(activeBox.Document.ContentStart,
@@ -182,6 +194,7 @@ namespace Noteorious.Rich_text_controls
 			fStream.Close();
 		}
 
+		// loads the current tab's rich text box from a specified filepath
 		void LoadXamlPackage(string filePath)
 		{
 			if (File.Exists(filePath))
@@ -192,7 +205,8 @@ namespace Noteorious.Rich_text_controls
 				range.Load(fStream, DataFormats.XamlPackage);
 				fStream.Close();
 
-				foreach (var paragraph in activeBox.Document.Blocks.OfType<Paragraph>())
+				// add back all the hyperlink event handlers as they are not automatically added 
+				foreach (var paragraph in activeBox.Document.Blocks.OfType<Paragraph>()) 
 				{
 					foreach (var hyperlink in paragraph.Inlines.OfType<Hyperlink>())
 					{
@@ -205,12 +219,14 @@ namespace Noteorious.Rich_text_controls
 		}
 
 
+		// Fires when the Font Selection box is changed
 		private void cmbFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (cmbFontFamily.SelectedItem != null)
 				activeBox.Selection.ApplyPropertyValue(Inline.FontFamilyProperty, cmbFontFamily.SelectedItem);
 		}
 
+		// Fires when the Font Size box is changed
 		private void cmbFontSize_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			activeBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, cmbFontSize.Text);
@@ -221,8 +237,8 @@ namespace Noteorious.Rich_text_controls
 
 		}
 
-		// File tree methods (and cursor type methods)
 
+		// File tree methods (and cursor type methods)
 		private void InitializeFileSystemObjects()
 		{ 
 			// Get path to system's documents folder

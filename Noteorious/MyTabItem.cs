@@ -17,13 +17,15 @@ namespace Noteorious
     {
         
 
-        public event EventHandler<MenuItem> ContextMenuUpdate;
+        public event EventHandler<MenuItem> ContextMenuUpdate; // Event handler for right click context menu
 
-        public event EventHandler<Hyperlink> NoteLinkUpdate;
+        public event EventHandler<Hyperlink> NoteLinkUpdate; // Event handler for adding a hyperlink
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged; // Event handler for changing the tab header via opening a file
 
-        private String _header;
+        private String _header; // the tab's header
+        
+        // sets or gets the tab's header
         public string Header
         {
             get { return _header; }
@@ -35,6 +37,7 @@ namespace Noteorious
             }
         }
 
+        // the tab's RichTextBox
         public RichTextBox Content { get; set; }
 
         // Default constructor takes in no variables and creates a new tab
@@ -83,6 +86,7 @@ namespace Noteorious
             Content.IsDocumentEnabled = true;
         }
 
+        // implementing header event handler
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -101,6 +105,7 @@ namespace Noteorious
                 
         }
 
+        // Handles note hyper link events
         public void nUpdate(Hyperlink h, EventArgs e)
         {
 
@@ -111,6 +116,7 @@ namespace Noteorious
 
         }
 
+        // creates new hyper link from a selection of text
         public void createHyperLink (TextSelection s)
         {
             // set the uri of the new hyperlink we created
@@ -125,6 +131,7 @@ namespace Noteorious
 
         }
 
+        // alternative constructor to add event handlers back when opening an existing note
         public void createHyperLink(Hyperlink h)
         {
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);

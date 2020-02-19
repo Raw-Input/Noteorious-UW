@@ -96,11 +96,7 @@
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Content" Value="{Binding Content}" >
-
-                    </Setter>
-
-
+                    <Setter Property="Content" Value="{Binding Content}" />
                 </Style>
             </TabControl.Resources>
         </TabControl>
