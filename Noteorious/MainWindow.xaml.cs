@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using Noteorious.ShellClasses;
+using swf = System.Windows.Forms;
 
 namespace Noteorious.Rich_text_controls
 {
@@ -146,6 +147,7 @@ namespace Noteorious.Rich_text_controls
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Filter = "Noteorious Note (*.noto)|*.noto|All files (*.*)|*.*";
+			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			if (dlg.ShowDialog() == true)
 			{
 				LoadXamlPackage(dlg.FileName);
@@ -219,18 +221,25 @@ namespace Noteorious.Rich_text_controls
 
 		}
 
-		// File tree methods test
+		// File tree methods (and cursor type methods)
 
 		private void InitializeFileSystemObjects()
-		{
-			var drives = DriveInfo.GetDrives();
-			DriveInfo.GetDrives().ToList().ForEach(drive =>
-			{
-				var fileSystemObject = new FileSystemObjectInfo(drive);
-				fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;
-				fileSystemObject.AfterExplore += FileSystemObject_AfterExplore;
-				treeView.Items.Add(fileSystemObject);
-			});
+		{ 
+			// Get path to system's documents folder
+			var docspath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			// Get folder info for stored system's documents folder
+			var docsfolderinfo = new DirectoryInfo(docspath);
+
+			// Establish file tree only with established documents folder
+			var fileSystemObject = new FileSystemObjectInfo(docsfolderinfo);
+
+			// Changing cursor to indicate loading (Seen mostly when opening additional files)
+			fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;
+			fileSystemObject.AfterExplore += FileSystemObject_AfterExplore;
+
+			// After loading, add file system to tree view
+			treeView.Items.Add(fileSystemObject);
+
 		}
 
 		private void FileSystemObject_AfterExplore(object sender, System.EventArgs e)
@@ -242,5 +251,32 @@ namespace Noteorious.Rich_text_controls
 		{
 			Cursor = Cursors.Wait;
 		}
+
+		
+		private void pfolder_open(object sender, RoutedEventArgs e)
+		{ 
+			swf.FolderBrowserDialog dlg = new swf.FolderBrowserDialog();
+			swf.DialogResult result = dlg.ShowDialog();
+			dlg.RootFolder = Environment.SpecialFolder.MyDocuments;
+
+			if (result == swf.DialogResult.OK) // Only try to add project folder if user hit ok and not cancel
+			{
+				var pfolderpath = dlg.SelectedPath; // Store file path for folder user selected
+
+				// Take given file path and get folder info to be added to file tree
+				var pfolderinfo = new DirectoryInfo(pfolderpath);
+
+				// Create file system object with the directory info
+				var fileSystemObject = new FileSystemObjectInfo(pfolderinfo);
+
+				// Changing cursor to indicate loading (Seen mostly when opening additional files)
+				fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;
+				fileSystemObject.AfterExplore += FileSystemObject_AfterExplore;
+
+				// After loading, add file system to tree view
+				treeView.Items.Add(fileSystemObject);
+			}
+		}
+		
 	}
 }

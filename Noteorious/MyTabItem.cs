@@ -72,14 +72,14 @@ namespace Noteorious
             item.Click += (sendingelement, eventargs) => cUpdate(item, eventargs); // give the item a click event handler
             cm.IsEnabled = true;
 
-            //Create header of tab
+            // Create header of tab
             Header = s;
 
             // Create a RichTextBox for editing text
             Content = new RichTextBox();
             Content.ContextMenu = cm;
 
-            // allows hyperlinks to function
+            // Allows hyperlinks to function
             Content.IsDocumentEnabled = true;
         }
 

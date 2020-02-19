@@ -44,6 +44,11 @@
 
         <!--    [File Tree]    -->
         <TreeView Name="treeView" Margin="10,10,5,10" Width="200" HorizontalAlignment="Left" Background="White" BorderBrush="Black">
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Project Folder..." Click="pfolder_open" FontSize="72" />
+                </ContextMenu>
+            </TreeView.ContextMenu>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
