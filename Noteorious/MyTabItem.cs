@@ -15,7 +15,7 @@ namespace Noteorious
 {
     public class MyTabItem : INotifyPropertyChanged
     {
-        
+
 
         public event EventHandler<MenuItem> ContextMenuUpdate; // Event handler for right click context menu
 
@@ -24,7 +24,7 @@ namespace Noteorious
         public event PropertyChangedEventHandler PropertyChanged; // Event handler for changing the tab header via opening a file
 
         private String _header; // the tab's header
-        
+
         // sets or gets the tab's header
         public string Header
         {
@@ -43,15 +43,10 @@ namespace Noteorious
         // Default constructor takes in no variables and creates a new tab
         public MyTabItem()
         {
-            // Create Context menu for the RichTextBox
-            ContextMenu cm = new ContextMenu();  // make a context menu
-            MenuItem item = new MenuItem(); // make a menuitem instance
-            item.Header = "Make new note"; // give the item a header
-            cm.Items.Add(item);
-            item.Click += (sendingelement, eventargs) => cUpdate(item, eventargs); // give the item a click event handler
-            cm.IsEnabled = true;
+            // Build context menu for right click
+            ContextMenu cm = createContextMenu();
 
-            //Create header of tab
+            // Create header of tab
             Header = "New Note";
 
             // Create a RichTextBox for editing text
@@ -61,19 +56,14 @@ namespace Noteorious
             // allows hyperlinks to function
             Content.IsDocumentEnabled = true;
 
-            
+
         }
 
         // This constructor takes in a string for the header and creates a new tab with the identified header
         public MyTabItem(String s)
         {
-            // Create Context menu for the RichTextBox
-            ContextMenu cm = new ContextMenu(); // make a context menu
-            MenuItem item = new MenuItem(); // make a menuitem instance
-            item.Header = "Make new note"; // give the item a header
-            cm.Items.Add(item);
-            item.Click += (sendingelement, eventargs) => cUpdate(item, eventargs); // give the item a click event handler
-            cm.IsEnabled = true;
+            // Build context menu for right click
+            ContextMenu cm = createContextMenu();
 
             // Create header of tab
             Header = s;
@@ -86,13 +76,53 @@ namespace Noteorious
             Content.IsDocumentEnabled = true;
         }
 
+
+        public ContextMenu createContextMenu()
+        {
+            // Create Context menu for the RichTextBox
+            ContextMenu cm = new ContextMenu();  // make a context menu
+
+            // Create make new note context menu button
+            MenuItem mkNewnote = new MenuItem();
+            mkNewnote.Header = "Make new note";
+            cm.Items.Add(mkNewnote);
+            mkNewnote.Click += (sendingelement, eventargs) => cUpdate(mkNewnote, eventargs); // give the item a click event handler
+
+            // Create link note context menu button
+            MenuItem lnkNote = new MenuItem();
+            lnkNote.Header = "Link to existing note";
+            lnkNote.Items.Add(new MenuItem());
+            cm.Items.Add(lnkNote);
+            lnkNote.SubmenuOpened += (sendingelement, eventargs) => cUpdate(lnkNote, eventargs);
+
+
+            //foreach ()
+
+            //lnkNote.Click += (sendingelement, eventargs) => cUpdate(lnkNote, eventargs); // give the item a click event handler
+
+            cm.IsEnabled = true; // enable context menu
+
+            return (cm);
+        }
+
         // implementing header event handler
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
+        public void addSubMenuItem(MenuItem item, List<String> notes) 
+        {
+            item.Items.Clear();
+            foreach(String s in notes)
+            {
+                MenuItem newItem = new MenuItem();
+                newItem.Header = s;
+                newItem.Click += (sendingelement, eventargs) => cUpdate(newItem, eventargs);
+                item.Items.Add(newItem);
+            }
+            
+        }
 
         // Handles context menu events
         public void cUpdate(MenuItem item, EventArgs e)
@@ -116,7 +146,7 @@ namespace Noteorious
 
         }
 
-        // creates new hyper link from a selection of text
+        // creates new hyper link from a selection of text. S is the source, the destination is automatically set from the source.
         public void createHyperLink (TextSelection s)
         {
             // set the uri of the new hyperlink we created
@@ -129,6 +159,17 @@ namespace Noteorious
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
 
 
+        }
+        // altenative constructor for linking a notes with different names. S is the text you want to be the source, u is the destination.
+        public void createHyperLink(TextSelection s, Uri u)
+        {
+            Run r = new Run(s.Text);
+            TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+            Hyperlink h = new Hyperlink(r, tp);
+            h.NavigateUri = u;
+            Trace.WriteLine("Delet");
+            tp.DeleteTextInRun(s.Text.Length);
+            h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
         }
 
         // alternative constructor to add event handlers back when opening an existing note
