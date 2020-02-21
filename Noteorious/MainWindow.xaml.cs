@@ -79,12 +79,11 @@ namespace Noteorious.Rich_text_controls
 				addTab(headerText); // whatever was selected by the user is set as the header of the new tab
 				tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection); // make the selected text link to the new tab
 
+				// Update our tab position
+				TabControl1.SelectedIndex = tabItems.Count - 1;
 
 				// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
 				SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + headerText + ".noto");
-
-				// Update our tab position
-				TabControl1.SelectedIndex = tabItems.Count - 1;
 
 				tabItems[TabControl1.SelectedIndex].Header = headerText;
 			} else if ((String)item.Header == "Link to existing note") // making the sub menu for selecting a note
@@ -98,18 +97,22 @@ namespace Noteorious.Rich_text_controls
 				tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection, uri); // make the selected text link to the new tab
 
 				// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
-				SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
+				// SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
 
 				// Update our tab position
 				TabControl1.SelectedIndex = tabItems.Count - 1;
+				
+				// Load the linked to tab
+				LoadXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
 
+				// Change the header of the tab
 				tabItems[TabControl1.SelectedIndex].Header = (String)item.Header;
 			}
 
 
 		}
 
-		// Handles making a hyperlink between two notes
+		// Handles clicking a hyperlink
 		public void HandleNoteLink(object sender, Hyperlink h)
 		{
 			// get all the files in the user's documents and search for a match with the sent hyper link
@@ -126,8 +129,9 @@ namespace Noteorious.Rich_text_controls
 				}
 				if (!trigger)
 				{
-					addTab(new TextRange(h.ContentStart, h.ContentEnd).Text);
+					addTab(Path.GetFileNameWithoutExtension(h.NavigateUri.OriginalString));
 					TabControl1.SelectedIndex = tabItems.Count - 1;
+					activeBox = tabItems[TabControl1.SelectedIndex].Content;
 					LoadXamlPackage(h.NavigateUri.LocalPath);
 				}
 				
@@ -198,7 +202,9 @@ namespace Noteorious.Rich_text_controls
 				if (dlg.ShowDialog() == true)
 				{
 					SaveXamlPackage(dlg.FileName);
+					tabItems[TabControl1.SelectedIndex].Header = Path.GetFileNameWithoutExtension(dlg.FileName);
 				}
+
 			}
 			
 		}
@@ -214,8 +220,7 @@ namespace Noteorious.Rich_text_controls
 		// saves the current tab's rich text box to a specified filepath
 		private void SaveXamlPackage(string filePath)
 		{
-			var range = new TextRange(activeBox.Document.ContentStart,
-				activeBox.Document.ContentEnd);
+			var range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
 			var fStream = new FileStream(filePath, FileMode.Create);
 			range.Save(fStream, DataFormats.XamlPackage);
 			fStream.Close();

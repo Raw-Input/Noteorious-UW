@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -146,6 +147,22 @@ namespace Noteorious
 
         }
 
+        // handles mousing over a hyperlink
+        public void hEnterUpdate(Hyperlink h, EventArgs e)
+        {
+
+            h.TextDecorations = TextDecorations.Underline;
+
+        }
+
+        // handles mousing over a hyperlink
+        public void hLeaveUpdate(Hyperlink h, EventArgs e)
+        {
+
+            h.TextDecorations = null;
+
+        }
+
         // creates new hyper link from a selection of text. S is the source, the destination is automatically set from the source.
         public void createHyperLink (TextSelection s)
         {
@@ -153,9 +170,16 @@ namespace Noteorious
             var uri = new System.Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s.Text + ".noto");
             Run r = new Run(s.Text);
             TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+            Run prev = (Run)Content.Selection.Start.Parent;
             Hyperlink h = new Hyperlink(r, tp);
+            h.FontFamily = prev.FontFamily;
+            h.FontSize = prev.FontSize;
             h.NavigateUri = uri;
+            h.TextDecorations = null;
+            h.Foreground = Brushes.LimeGreen;
             tp.DeleteTextInRun(s.Text.Length);
+            h.MouseEnter += (sendingelement, eventargs) => hEnterUpdate(h, eventargs);
+            h.MouseLeave += (sendingelement, eventargs) => hLeaveUpdate(h, eventargs);
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
 
 
@@ -166,16 +190,27 @@ namespace Noteorious
             Run r = new Run(s.Text);
             TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
             Hyperlink h = new Hyperlink(r, tp);
+            Run prev = (Run)Content.Selection.Start.Parent;
+            h.FontFamily = prev.FontFamily;
+            h.FontSize = prev.FontSize;
             h.NavigateUri = u;
-            Trace.WriteLine("Delet");
+            h.TextDecorations = null;
+            h.Foreground = Brushes.LimeGreen;
             tp.DeleteTextInRun(s.Text.Length);
+            h.MouseEnter += (sendingelement, eventargs) => hEnterUpdate(h, eventargs);
+            h.MouseLeave += (sendingelement, eventargs) => hLeaveUpdate(h, eventargs);
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
         }
 
         // alternative constructor to add event handlers back when opening an existing note
         public void createHyperLink(Hyperlink h)
         {
+            h.TextDecorations = null;
+            h.Foreground = Brushes.LimeGreen;
+            h.MouseEnter += (sendingelement, eventargs) => hEnterUpdate(h, eventargs);
+            h.MouseLeave += (sendingelement, eventargs) => hLeaveUpdate(h, eventargs);
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
+
         }
 
     }
