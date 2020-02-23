@@ -36,7 +36,9 @@
     <None Remove="images\underlineicon.PNG" />
     <None Remove="italic.png" />
     <None Remove="italicicon.PNG" />
+    <None Remove="newnote.png" />
     <None Remove="save.png" />
+    <None Remove="saveas.png" />
     <None Remove="saveicon.png" />
     <None Remove="underline.png" />
     <None Remove="underlineicon.PNG" />
@@ -97,7 +99,13 @@
     <Resource Include="italicicon.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="newnote.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="save.png" />
+    <Resource Include="saveas.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="saveicon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

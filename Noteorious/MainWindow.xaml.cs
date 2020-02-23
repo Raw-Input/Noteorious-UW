@@ -160,6 +160,22 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		private void btnNewNote_MouseUp(object sender, RoutedEventArgs e)
+		{
+			addTab();
+			TabControl1.SelectedIndex += 1;
+		}
+
+		private void btnSaveAs_MouseUp(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog dlg = new SaveFileDialog();
+			dlg.Filter = "Noteorious Note (*.noto)|*.noto|All files (*.*)|*.*";
+			if (dlg.ShowDialog() == true)
+			{
+				SaveXamlPackage(dlg.FileName);
+				tabItems[TabControl1.SelectedIndex].Header = Path.GetFileNameWithoutExtension(dlg.FileName);
+			}
+		}
 
 		// Handles when the font changes via the selection box
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
@@ -325,6 +341,10 @@ namespace Noteorious.Rich_text_controls
 				treeView.Items.Add(fileSystemObject);
 			}
 		}
-		
+
+		private void btnNewNote_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+
+		}
 	}
 }
