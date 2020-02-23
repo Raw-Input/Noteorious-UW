@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using Noteorious.ShellClasses;
 using swf = System.Windows.Forms;
+using System.Collections;
 
 namespace Noteorious.Rich_text_controls
 {
@@ -21,6 +22,9 @@ namespace Noteorious.Rich_text_controls
 		public RichTextBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
 		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>(); // stores a list of all the tabs currently loaded by the program
 		public String defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //  where the app will save and load notes from 
+
+		public int clickCount = 0; // controls the click count for file tree objects
+		public object lastSender = null;
 		public RichTextEditorSample()
 		{
 			// init editor
@@ -160,12 +164,14 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		// Fires when a new note button is clicked
 		private void btnNewNote_MouseUp(object sender, RoutedEventArgs e)
 		{
 			addTab();
 			TabControl1.SelectedIndex += 1;
 		}
 
+		// Fires when save as button is clicked
 		private void btnSaveAs_MouseUp(object sender, RoutedEventArgs e)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
@@ -175,6 +181,24 @@ namespace Noteorious.Rich_text_controls
 				SaveXamlPackage(dlg.FileName);
 				tabItems[TabControl1.SelectedIndex].Header = Path.GetFileNameWithoutExtension(dlg.FileName);
 			}
+		}
+
+		// Fires when a file tree object is clicked, will only trigger code if object is double clicked
+		private void fileTreeNote_click(object sender, MouseButtonEventArgs e)
+		{
+			clickCount++;
+			if (sender == lastSender)
+			{
+				if (clickCount % 2 == 0)
+				{
+					StackPanel s = (StackPanel)sender;
+					TextBlock t = (TextBlock)s.Children[1];
+					addTab(t.Text.Substring(0, t.Text.Length - 5));
+					TabControl1.SelectedIndex = tabItems.Count - 1;
+					LoadXamlPackage(defaultFolder + "\\" + t.Text);
+				}
+			}
+			lastSender = sender;
 		}
 
 		// Handles when the font changes via the selection box
@@ -296,6 +320,7 @@ namespace Noteorious.Rich_text_controls
 
 			// Establish file tree only with established documents folder
 			var fileSystemObject = new FileSystemObjectInfo(docsfolderinfo);
+
 
 			// Changing cursor to indicate loading (Seen mostly when opening additional files)
 			fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;

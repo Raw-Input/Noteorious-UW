@@ -37,6 +37,7 @@
     <None Remove="italic.png" />
     <None Remove="italicicon.PNG" />
     <None Remove="newnote.png" />
+    <None Remove="N_Logo_Icon.ico" />
     <None Remove="save.png" />
     <None Remove="saveas.png" />
     <None Remove="saveicon.png" />
@@ -100,6 +101,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="newnote.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="N_Logo_Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="save.png" />

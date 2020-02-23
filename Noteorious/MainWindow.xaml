@@ -7,6 +7,7 @@
         xmlns:mvvm="clr-namespace:Noteorious"
         xmlns:tabs="clr-namespace:Noteorious"
         mc:Ignorable="d"
+        Icon="N_Logo_Icon.ico"
         Title="Noteorious" Height="720" Width="1280">
 
 
@@ -57,15 +58,17 @@
             </TreeView.ContextMenu>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="Visibility" Value="{Binding Path=Visible}"> </Setter>
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                    
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseUp="fileTreeNote_click">
                         <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
-                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}" Foreground="#CCCCCC"></TextBlock>
+                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}" Foreground="#CCCCCC" ></TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>

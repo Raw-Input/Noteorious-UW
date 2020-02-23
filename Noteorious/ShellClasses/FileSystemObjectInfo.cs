@@ -12,25 +12,33 @@ namespace Noteorious.ShellClasses
     {
         public FileSystemObjectInfo(FileSystemInfo info)
         {
-            if (this is DummyFileSystemObjectInfo)
+            if (info.Extension == ".noto" | info.Extension == "")
             {
-                return;
-            }
+                Visible = "Visible";
 
-            Children = new ObservableCollection<FileSystemObjectInfo>();
-            FileSystemInfo = info;
+                if (this is DummyFileSystemObjectInfo)
+                {
+                    return;
+                }
 
-            if (info is DirectoryInfo)
+                Children = new ObservableCollection<FileSystemObjectInfo>();
+                FileSystemInfo = info;
+
+                if (info is DirectoryInfo)
+                {
+                    ImageSource = FolderManager.GetImageSource(info.FullName, ItemState.Close);
+                    AddDummy();
+                }
+                else if (info is FileInfo)
+                {
+                    ImageSource = FileManager.GetImageSource(info.FullName);
+                }
+
+                PropertyChanged += new PropertyChangedEventHandler(FileSystemObjectInfo_PropertyChanged);
+            } else
             {
-                ImageSource = FolderManager.GetImageSource(info.FullName, ItemState.Close);
-                AddDummy();
+                Visible = "Collapsed";
             }
-            else if (info is FileInfo)
-            {
-                ImageSource = FileManager.GetImageSource(info.FullName);
-            }
-
-            PropertyChanged += new PropertyChangedEventHandler(FileSystemObjectInfo_PropertyChanged);
         }
 
         public FileSystemObjectInfo(DriveInfo drive)
@@ -132,6 +140,12 @@ namespace Noteorious.ShellClasses
         {
             get { return GetValue<DriveInfo>("Drive"); }
             set { SetValue("Drive", value); }
+        }
+
+        public String Visible
+        {
+            get;
+            set;
         }
 
         #endregion
