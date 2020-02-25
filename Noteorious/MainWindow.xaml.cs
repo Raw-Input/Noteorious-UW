@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using Noteorious.ShellClasses;
 using swf = System.Windows.Forms;
 using System.Collections;
+using System.Windows.Data;
 
 namespace Noteorious.Rich_text_controls
 {
@@ -304,10 +305,7 @@ namespace Noteorious.Rich_text_controls
 			activeBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, cmbFontSize.Text);
 		}
 
-		private void img_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-
-		}
+		
 
 
 		// File tree methods (and cursor type methods)
@@ -367,9 +365,23 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
-		private void btnNewNote_MouseUp(object sender, MouseButtonEventArgs e)
+		private void searchBoxTextFocus(object sender, RoutedEventArgs e)
 		{
-
+			var tb1 = sender as TextBox;
+			if (tb1.Text == " Search Notes...")
+			{
+				tb1.Text = "";
+			}
+			
+		}
+		private void searchBoxLostFocus(object sender, RoutedEventArgs e)
+		{
+			var tb1 = sender as TextBox;
+			if(tb1.Text == "")
+			{
+				tb1.Text = " Search Notes...";
+			}
+			
 		}
 	}
 }
