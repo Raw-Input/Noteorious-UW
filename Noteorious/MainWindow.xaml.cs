@@ -326,7 +326,7 @@ namespace Noteorious.Rich_text_controls
 
 			// After loading, add file system to tree view
 			treeView.Items.Add(fileSystemObject);
-
+			//treeView.Items.Remove(fileSystemObject);
 		}
 
 		private void FileSystemObject_AfterExplore(object sender, System.EventArgs e)
@@ -339,8 +339,8 @@ namespace Noteorious.Rich_text_controls
 			Cursor = Cursors.Wait;
 		}
 
-		
-		private void pfolder_open(object sender, RoutedEventArgs e)
+		// Triggers from xaml right click context menu on file tree -> when user selects "open new project folder"
+		private void Pfolder_open(object sender, RoutedEventArgs e)
 		{ 
 			swf.FolderBrowserDialog dlg = new swf.FolderBrowserDialog();
 			swf.DialogResult result = dlg.ShowDialog();
@@ -365,8 +365,49 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
-		private void searchBoxTextFocus(object sender, RoutedEventArgs e)
+		// Triggers from xaml right click context menu on file tree -> when user selects "close docs folder"
+		private void Pfolder_close(object sender, RoutedEventArgs e)
 		{
+			// Get path to system's documents folder
+			var docspath = defaultFolder;
+			// Get folder info for stored system's documents folder
+			var docsfolderinfo = new DirectoryInfo(docspath);
+
+			// Establish file tree only with established documents folder
+			var fileSystemObject = new FileSystemObjectInfo(docsfolderinfo);
+
+			// Changing cursor to indicate loading (Seen mostly when opening additional files)
+			fileSystemObject.BeforeExplore += FileSystemObject_BeforeExplore;
+			fileSystemObject.AfterExplore += FileSystemObject_AfterExplore;
+
+			// After loading, add file system to tree view
+			treeView.Items.Remove(fileSystemObject);
+		}
+
+		private void Pfolder_clear(object sender, RoutedEventArgs e)
+		{
+			treeView.Items.Clear();
+		}
+
+		private void Pfolder_hide(object sender, RoutedEventArgs e)
+		{
+			treeView.Visibility = Visibility.Hidden;
+		}
+
+		private void SearchResults_clear(object sender, RoutedEventArgs e)
+		{
+
+			txtSearchBox.Text = " Search Notes...";
+			treeView.Visibility = Visibility.Visible;
+			searchView.Visibility = Visibility.Collapsed;
+
+		}
+
+
+		private void SearchBoxTextFocus(object sender, RoutedEventArgs e)
+		{
+			// treeView.Visibility = Visibility.Visible;
+
 			var tb1 = sender as TextBox;
 			if (tb1.Text == " Search Notes...")
 			{
@@ -374,12 +415,17 @@ namespace Noteorious.Rich_text_controls
 			}
 			
 		}
-		private void searchBoxLostFocus(object sender, RoutedEventArgs e)
+		private void SearchBoxLostFocus(object sender, RoutedEventArgs e)
 		{
 			var tb1 = sender as TextBox;
 			if(tb1.Text == "")
 			{
 				tb1.Text = " Search Notes...";
+			}
+			else
+			{
+				treeView.Visibility = Visibility.Hidden;
+				searchView.Visibility = Visibility.Visible;
 			}
 			
 		}

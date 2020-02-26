@@ -12,7 +12,7 @@
         Title="Noteorious" Height="720" Width="1280">
 
 
-    <!--test comment-->
+    <!--    [Example_Comment_Block_Header]    -->
 
     <!--    [Main Dock]    -->
     <Window.CommandBindings>
@@ -48,25 +48,24 @@
             <Separator Margin="10,0,10,0" />
             <ComboBox Name="cmbFontFamily" Width="150" SelectionChanged="cmbFontFamily_SelectionChanged" />
             <ComboBox Name="cmbFontSize" Width="50" IsEditable="True" TextBoxBase.TextChanged="cmbFontSize_TextChanged" />
-
-            <Grid Background="White" HorizontalAlignment="Right" Height="20" Margin="100,0,0,0">
-                <TextBox Text=" Search Notes..." Width="200" Margin="0,0,0,0" Name="txtSearchBox" Background="Transparent" GotFocus="searchBoxTextFocus" LostFocus="searchBoxLostFocus"/>
-            </Grid>
         </ToolBar>
 
+
         <!--    [File Tree]    -->
-        <TreeView Name="treeView" Margin="10,10,5,10" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black">
+        <TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible">
             <TreeView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Add Project Folder..." Click="pfolder_open" FontSize="72" />
+                    <MenuItem Header="Add project folder..." Click="Pfolder_open"/>
+                    <MenuItem Header="Remove docs folder (not working)" Click="Pfolder_close"/>
+                    <MenuItem Header="Clear all project folders" Click="Pfolder_clear"/>
+                    <MenuItem Header="Test hide" Click="Pfolder_hide"/>
                 </ContextMenu>
             </TreeView.ContextMenu>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="Visibility" Value="{Binding Path=Visible}"> </Setter>
+                    <Setter Property="Visibility" Value="{Binding Path=Visible}"></Setter>
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
-                    
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
@@ -79,6 +78,36 @@
             </TreeView.Resources>
         </TreeView>
 
+
+
+        <!--    [Search Text Box]    -->
+        <Grid x:Name="txtSearchBG" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="-205,12.2,0,0" DockPanel.Dock="Top">
+            <TextBox Text=" Search Notes..." Width="200" x:Name="txtSearchBox" Background="Transparent" GotFocus="SearchBoxTextFocus" LostFocus="SearchBoxLostFocus"/>
+        </Grid>
+
+        <!--    [Search Results File Tree]    -->
+        <TreeView Name="searchView" Margin="-205,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed">
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Clear Search" Click="SearchResults_clear"/>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="Visibility" Value="{Binding Path=Visible}"></Setter>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
+                    <StackPanel Orientation="Horizontal" MouseUp="fileTreeNote_click">
+                        <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
+                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}" Foreground="#CCCCCC" ></TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
 
         <!--    [Text & Tabs Block]    -->
         <TabControl x:Name="TabControl1" Margin="5,10,10,10" SelectionChanged="TabControl_SelectionChanged" Background="white" RenderTransformOrigin="0.5,0.5" Width="Auto" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="#000000">
@@ -121,5 +150,7 @@
                 </Style>
             </TabControl.Resources>
         </TabControl>
+
+
     </DockPanel>
 </Window>
