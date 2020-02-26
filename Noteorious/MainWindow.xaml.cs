@@ -57,6 +57,7 @@ namespace Noteorious.Rich_text_controls
 		// adds a new tab with a name of String s
 		private void addTab(String s)
 		{
+			s = s.Trim();
 			MyTabItem newTab = new MyTabItem(s); 
 			newTab.ContextMenuUpdate += HandleContextMenu; // event handler
 			newTab.NoteLinkUpdate += HandleNoteLink; // event handler
@@ -75,7 +76,7 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
-		// Handles all context mnu events
+		// Handles all context menu events
 		public void HandleContextMenu(object sender, MenuItem item)
 		{
 			if((String)item.Header == "Make new note")
@@ -86,7 +87,7 @@ namespace Noteorious.Rich_text_controls
 
 				// Update our tab position
 				TabControl1.SelectedIndex = tabItems.Count - 1;
-
+				
 				// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
 				SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + headerText + ".noto");
 
@@ -97,24 +98,37 @@ namespace Noteorious.Rich_text_controls
 			} else // when selecting a note via the sub menu
 			{
 				String selectedText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text;
-				addTab((String)item.Header); // whatever was selected by the user is set as the header of the new tab
+				var files = Directory.GetFiles(defaultFolder, "*").Select(f => Path.GetFileNameWithoutExtension(f));
 				var uri = new System.Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
 				tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection, uri); // make the selected text link to the new tab
+				if (files.Contains(System.IO.Path.GetFileName((String)item.Header)))
+				{
+					for (int i = 0; i < tabItems.Count; i++)
+					{
+						if (tabItems[i].Header == System.IO.Path.GetFileNameWithoutExtension((String)item.Header))
+						{
+							TabControl1.SelectedIndex = i;
+						}
+					}
+				} else
+				{
+					addTab((String)item.Header); // whatever was selected by the user is set as the header of the new tab
 
-				// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
-				// SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
+					tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection, uri); // make the selected text link to the new tab
 
-				// Update our tab position
-				TabControl1.SelectedIndex = tabItems.Count - 1;
-				
-				// Load the linked to tab
-				LoadXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
+					// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
+					// SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
 
-				// Change the header of the tab
-				tabItems[TabControl1.SelectedIndex].Header = (String)item.Header;
+					// Update our tab position
+					TabControl1.SelectedIndex = tabItems.Count - 1;
+
+					// Load the linked to tab
+					LoadXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
+
+					// Change the header of the tab
+					tabItems[TabControl1.SelectedIndex].Header = (String)item.Header;
+				}
 			}
-
-
 		}
 
 		// Handles clicking a hyperlink

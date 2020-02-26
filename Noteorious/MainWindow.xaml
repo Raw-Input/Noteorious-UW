@@ -110,11 +110,12 @@
         </TreeView>
 
         <!--    [Text & Tabs Block]    -->
-        <TabControl x:Name="TabControl1" Margin="5,10,10,10" SelectionChanged="TabControl_SelectionChanged" Background="white" RenderTransformOrigin="0.5,0.5" Width="Auto" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="#000000">
+        <TabControl x:Name="TabControl1" Margin="5,10,10,10" SelectionChanged="TabControl_SelectionChanged" Background="white" RenderTransformOrigin="0.5,0.5" Width="Auto" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="#6da03c" BorderThickness="4">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">
                         <Setter.Value>
+
                             <ControlTemplate TargetType="TabItem">
                                 <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#6da03c" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
                                     <StackPanel Orientation="Horizontal" Margin="6,4,6,4">
@@ -135,7 +136,7 @@
                                         <Setter TargetName="Text" Property="TextBlock.Foreground" Value="Black"/>
                                         <Setter TargetName="Text" Property="TextBlock.FontWeight" Value="Bold"/>
                                         <Setter TargetName="Text" Property="Margin" Value="2,1,1,1"/>
-                                        <Setter TargetName="Border" Property="Margin" Value="1,1,1,-4"/>
+                                        <Setter TargetName="Border" Property="Margin" Value="-2,1,-2,-4"/>
                                         <Setter TargetName="Border" Property="Padding" Value="1"/>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
@@ -147,6 +148,7 @@
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Content" Value="{Binding Content}" />
+                    
                 </Style>
             </TabControl.Resources>
         </TabControl>

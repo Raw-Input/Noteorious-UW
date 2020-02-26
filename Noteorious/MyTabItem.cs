@@ -53,7 +53,11 @@ namespace Noteorious
             // Create a RichTextBox for editing text
             Content = new RichTextBox();
             Content.ContextMenu = cm;
-
+            //SolidColorBrush b = (SolidColorBrush)(new BrushConverter().ConvertFrom("#6da03c"));
+            Content.BorderThickness = new Thickness(0);
+            Content.Margin = new Thickness(10);
+            //Content.BorderBrush = b;
+            
             // allows hyperlinks to function
             Content.IsDocumentEnabled = true;
 
@@ -72,6 +76,10 @@ namespace Noteorious
             // Create a RichTextBox for editing text
             Content = new RichTextBox();
             Content.ContextMenu = cm;
+            //SolidColorBrush b = (SolidColorBrush)(new BrushConverter().ConvertFrom("#6da03c"));
+            Content.BorderThickness = new Thickness(0);
+            Content.Margin = new Thickness(10);
+            //Content.BorderBrush = b;
 
             // Allows hyperlinks to function
             Content.IsDocumentEnabled = true;
