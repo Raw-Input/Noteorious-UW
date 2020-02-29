@@ -172,20 +172,23 @@ namespace Noteorious
         }
 
         // creates new hyper link from a selection of text. S is the source, the destination is automatically set from the source.
-        public void createHyperLink (TextSelection s)
+        public void createHyperLink ()
         {
+            int l = Content.Selection.Text.Length;
+            Trace.WriteLine(l);
             // set the uri of the new hyperlink we created
-            var uri = new System.Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s.Text + ".noto");
-            Run r = new Run(s.Text);
-            TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
+            var uri = new System.Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + Content.Selection.Text + ".noto");
+            Run r = new Run(Content.Selection.Text);
+            TextPointer tp = Content.Selection.Start;
             Run prev = (Run)Content.Selection.Start.Parent;
+            Content.Selection.Text = Content.Selection.Text.Remove(0, l);
             Hyperlink h = new Hyperlink(r, tp);
             h.FontFamily = prev.FontFamily;
             h.FontSize = prev.FontSize;
+            h.FontStyle = prev.FontStyle;
             h.NavigateUri = uri;
             h.TextDecorations = null;
             h.Foreground = Brushes.LimeGreen;
-            tp.DeleteTextInRun(s.Text.Length);
             h.MouseEnter += (sendingelement, eventargs) => hEnterUpdate(h, eventargs);
             h.MouseLeave += (sendingelement, eventargs) => hLeaveUpdate(h, eventargs);
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);
@@ -193,18 +196,20 @@ namespace Noteorious
 
         }
         // altenative constructor for linking a notes with different names. S is the text you want to be the source, u is the destination.
-        public void createHyperLink(TextSelection s, Uri u)
+        public void createHyperLink(Uri u)
         {
-            Run r = new Run(s.Text);
-            TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Forward);
-            Hyperlink h = new Hyperlink(r, tp);
+            int l = Content.Selection.Text.Length;
+            Run r = new Run(Content.Selection.Text);
+            TextPointer tp = Content.CaretPosition.GetInsertionPosition(LogicalDirection.Backward);
             Run prev = (Run)Content.Selection.Start.Parent;
+            Content.Selection.Text = Content.Selection.Text.Remove(0, l);
+            Hyperlink h = new Hyperlink(r, tp);
             h.FontFamily = prev.FontFamily;
             h.FontSize = prev.FontSize;
+            h.FontStyle = prev.FontStyle;
             h.NavigateUri = u;
             h.TextDecorations = null;
             h.Foreground = Brushes.LimeGreen;
-            tp.DeleteTextInRun(s.Text.Length);
             h.MouseEnter += (sendingelement, eventargs) => hEnterUpdate(h, eventargs);
             h.MouseLeave += (sendingelement, eventargs) => hLeaveUpdate(h, eventargs);
             h.Click += (sendingelement, eventargs) => nUpdate(h, eventargs);

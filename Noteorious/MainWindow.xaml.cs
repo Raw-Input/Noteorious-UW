@@ -83,7 +83,7 @@ namespace Noteorious.Rich_text_controls
 			{
 				String headerText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text;
 				addTab(headerText); // whatever was selected by the user is set as the header of the new tab
-				tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection); // make the selected text link to the new tab
+				tabItems[TabControl1.SelectedIndex].createHyperLink(); // make the selected text link to the new tab
 
 				// Update our tab position
 				TabControl1.SelectedIndex = tabItems.Count - 1;
@@ -100,7 +100,7 @@ namespace Noteorious.Rich_text_controls
 				String selectedText = tabItems[TabControl1.SelectedIndex].Content.Selection.Text;
 				var files = Directory.GetFiles(defaultFolder, "*").Select(f => Path.GetFileNameWithoutExtension(f));
 				var uri = new System.Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
-				tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection, uri); // make the selected text link to the new tab
+				tabItems[TabControl1.SelectedIndex].createHyperLink(uri); // make the selected text link to the new tab
 				if (files.Contains(System.IO.Path.GetFileName((String)item.Header)))
 				{
 					for (int i = 0; i < tabItems.Count; i++)
@@ -114,7 +114,7 @@ namespace Noteorious.Rich_text_controls
 				{
 					addTab((String)item.Header); // whatever was selected by the user is set as the header of the new tab
 
-					tabItems[TabControl1.SelectedIndex].createHyperLink(tabItems[TabControl1.SelectedIndex].Content.Selection, uri); // make the selected text link to the new tab
+					tabItems[TabControl1.SelectedIndex].createHyperLink(uri); // make the selected text link to the new tab
 
 					// after creating the hyperlink for our new part of the note, we want to save the blank note that was created so it can be referenced by the hyperlink
 					// SaveXamlPackage(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + (String)item.Header + ".noto");
