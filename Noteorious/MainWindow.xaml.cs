@@ -398,6 +398,8 @@ namespace Noteorious.Rich_text_controls
 			treeView.Items.Remove(fileSystemObject);
 		}
 
+		// Search box methods
+
 		private void Pfolder_clear(object sender, RoutedEventArgs e)
 		{
 			treeView.Items.Clear();
@@ -410,13 +412,11 @@ namespace Noteorious.Rich_text_controls
 
 		private void SearchResults_clear(object sender, RoutedEventArgs e)
 		{
-
+			treeView.Focus();
 			txtSearchBox.Text = " Search Notes...";
 			treeView.Visibility = Visibility.Visible;
 			searchView.Visibility = Visibility.Collapsed;
-
 		}
-
 
 		private void SearchBoxTextFocus(object sender, RoutedEventArgs e)
 		{
@@ -429,19 +429,94 @@ namespace Noteorious.Rich_text_controls
 			}
 			
 		}
+
 		private void SearchBoxLostFocus(object sender, RoutedEventArgs e)
 		{
 			var tb1 = sender as TextBox;
-			if(tb1.Text == "")
+			if(tb1.Text == "") // Search box has been cleared (left blank)
 			{
 				tb1.Text = " Search Notes...";
+				treeView.Visibility = Visibility.Visible;		// Show project folders
+				searchView.Visibility = Visibility.Collapsed;	// Hide search files
 			}
-			else
+			else // Search box has text in it
 			{
-				treeView.Visibility = Visibility.Hidden;
-				searchView.Visibility = Visibility.Visible;
+				treeView.Visibility = Visibility.Hidden;		// Hide project folders
+				searchView.Visibility = Visibility.Visible;		// Show search files
 			}
-			
 		}
+
+		// User pressed enter in the text box
+		private void KeyDownHandler(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Return) // Enter/Return is pressed in the text box
+			{
+				Debug.WriteLine("Enter has been pressed in the search box"); // Test console output (remove later)
+
+				var tb1 = sender as TextBox;
+				if (tb1.Text == "") // Search box has been cleared (left blank)
+				{
+					treeView.Focus(); // Force text box focus loss
+					tb1.Text = " Search Notes...";
+					treeView.Visibility = Visibility.Visible;       // Show project folders
+					searchView.Visibility = Visibility.Collapsed;   // Hide search files
+				}
+				else // Search box has text in it (activate search)
+				{
+					treeView.Visibility = Visibility.Hidden;        // Hide project folders
+					searchView.Visibility = Visibility.Visible;     // Show search files
+					ActivateSearch(tb1.Text);
+				}
+			}
+		}
+
+		private void ActivateSearch(string searchtxt)
+		{
+			Debug.WriteLine("[Search text]: " + searchtxt); // Test console output (remove later)
+
+
+			string[] files = System.IO.Directory.GetFiles(defaultFolder, "*.noto"); // Sett to check default folder [CHANGE LATER to all project folders]
+
+
+			Debug.WriteLine("[Files found to search through]:"); // Test console output (remove later)
+			foreach (var notofile in files) // Test console output (remove later)
+			{
+				Debug.WriteLine(notofile.ToString());
+			}
+			// Debug.WriteLine(files); // Test console output (remove later)
+
+			var dog = true;
+			if (dog)
+			{
+				foreach (var notofile in files)
+				{
+					// Debug.WriteLine("[Trying '" + notofile + "']"); // Test console output (remove later)
+					try
+					{   // Open the text file using a stream reader.
+						Debug.WriteLine("[Trying '" + notofile + "']"); // Test console output (remove later)
+
+						string teststring = File.ReadAllText(notofile);
+
+						Debug.WriteLine(teststring);
+
+						/*
+						using (StreamReader sr = new StreamReader(notofile))
+						{
+							// Read the stream to a string, and write the string to the console.
+							String line = sr.ReadToEnd();
+							Debug.WriteLine(line);
+						}
+						*/
+					}
+					catch (IOException e)
+					{
+						Debug.WriteLine("[Error with file '" + notofile + "']"); // Test console output (remove later)
+						Debug.WriteLine("[Error reading a file]: " + e.Message);
+					}
+				}
+			}
+
+		}
+
 	}
 }

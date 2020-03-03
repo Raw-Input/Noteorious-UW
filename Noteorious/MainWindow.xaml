@@ -52,7 +52,7 @@
 
 
         <!--    [File Tree]    -->
-        <TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible">
+        <TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible" Height="580.8">
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add project folder..." Click="Pfolder_open"/>
@@ -82,11 +82,18 @@
 
         <!--    [Search Text Box]    -->
         <Grid x:Name="txtSearchBG" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="-205,12.2,0,0" DockPanel.Dock="Top">
-            <TextBox Text=" Search Notes..." Width="200" x:Name="txtSearchBox" Background="Transparent" GotFocus="SearchBoxTextFocus" LostFocus="SearchBoxLostFocus"/>
+            <TextBox Text=" Search Notes..." Width="200" x:Name="txtSearchBox" Background="Transparent" GotFocus="SearchBoxTextFocus" LostFocus="SearchBoxLostFocus" KeyDown="KeyDownHandler">
+                <TextBox.ContextMenu>
+                    <ContextMenu Name="SearchContext">
+                        <MenuItem Header="Clear Search" Click="SearchResults_clear"/>
+                    </ContextMenu>
+                </TextBox.ContextMenu>
+            </TextBox>
         </Grid>
 
         <!--    [Search Results File Tree]    -->
-        <TreeView Name="searchView" Margin="-205,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed">
+        <!--<TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible" Height="580.8">-->
+        <TreeView Name="searchView" Margin="-205,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed" Height="580.8">
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Clear Search" Click="SearchResults_clear"/>
