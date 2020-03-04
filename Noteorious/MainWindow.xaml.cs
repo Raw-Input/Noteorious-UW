@@ -301,8 +301,6 @@ namespace Noteorious.Rich_text_controls
 					}
 				}
 			}
-
-			
 		}
 
 
@@ -437,7 +435,7 @@ namespace Noteorious.Rich_text_controls
 			{
 				tb1.Text = " Search Notes...";
 				treeView.Visibility = Visibility.Visible;		// Show project folders
-				searchView.Visibility = Visibility.Collapsed;	// Hide search files
+				searchView.Visibility = Visibility.Collapsed;   // Hide search files
 			}
 			else // Search box has text in it
 			{
@@ -456,10 +454,11 @@ namespace Noteorious.Rich_text_controls
 				var tb1 = sender as TextBox;
 				if (tb1.Text == "") // Search box has been cleared (left blank)
 				{
-					treeView.Focus(); // Force text box focus loss
+					
 					tb1.Text = " Search Notes...";
-					treeView.Visibility = Visibility.Visible;       // Show project folders
 					searchView.Visibility = Visibility.Collapsed;   // Hide search files
+					treeView.Focus();
+					treeView.Visibility = Visibility.Visible;       // Show project folders
 				}
 				else // Search box has text in it (activate search)
 				{

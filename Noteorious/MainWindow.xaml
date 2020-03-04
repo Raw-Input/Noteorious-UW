@@ -20,7 +20,7 @@
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
     </Window.CommandBindings>
     <DockPanel Background="#202020">
-        <ToolBar DockPanel.Dock="Top" Background="#000000">
+        <ToolBar DockPanel.Dock="Top" Background="#000000" Name="toolbar">
             <Image Source="images/NoteoriousLogo.png" Width="200" Height="40" Margin ="0, 2, 7, 2" />
             <!--icons - adding to the repos/noteorious?-->
             <Button Name="btnNewNote" Click="btnNewNote_MouseUp" ToolTip="New Note">
@@ -93,7 +93,7 @@
 
         <!--    [Search Results File Tree]    -->
         <!--<TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible" Height="580.8">-->
-        <TreeView Name="searchView" Margin="-205,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed" Height="580.8">
+        <TreeView Name="searchView" Margin="-205,20,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed" Height="580.8">
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Clear Search" Click="SearchResults_clear"/>

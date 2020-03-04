@@ -171,7 +171,7 @@ namespace Noteorious
 
         }
 
-        // creates new hyper link from a selection of text. S is the source, the destination is automatically set from the source.
+        // creates new hyper link from a selection of text. The destination is automatically set from the source.
         public void createHyperLink ()
         {
             int l = Content.Selection.Text.Length;
@@ -195,7 +195,7 @@ namespace Noteorious
 
 
         }
-        // altenative constructor for linking a notes with different names. S is the text you want to be the source, u is the destination.
+        // altenative constructor for linking a notes with different names, u is the destination.
         public void createHyperLink(Uri u)
         {
             int l = Content.Selection.Text.Length;
