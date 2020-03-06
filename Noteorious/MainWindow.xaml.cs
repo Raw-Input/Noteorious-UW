@@ -23,6 +23,7 @@ namespace Noteorious.Rich_text_controls
 		public RichTextBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
 		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>(); // stores a list of all the tabs currently loaded by the program
 		public String defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //  where the app will save and load notes from 
+		public String matchedText = "";
 		public bool debugging = true;
 
 		public int clickCount = 0; // controls the click count for file tree objects
@@ -202,16 +203,28 @@ namespace Noteorious.Rich_text_controls
 		// Fires when a file tree object is clicked, will only trigger code if object is double clicked
 		private void fileTreeNote_click(object sender, MouseButtonEventArgs e)
 		{
+			
 			clickCount++;
 			if (sender == lastSender)
 			{
-				if (clickCount % 2 == 0)
+				if (clickCount % 2 == 0 && matchedText == "")
 				{
+					Trace.WriteLine(matchedText);
 					StackPanel s = (StackPanel)sender;
 					TextBlock t = (TextBlock)s.Children[1];
 					addTab(t.Text.Substring(0, t.Text.Length - 5));
 					TabControl1.SelectedIndex = tabItems.Count - 1;
 					LoadXamlPackage(defaultFolder + "\\" + t.Text);
+				} else if (clickCount % 2 == 0)
+				{
+					
+					StackPanel s = (StackPanel)sender;
+					TextBlock t = (TextBlock)s.Children[1];
+					addTab(t.Text.Substring(0, t.Text.Length - 5));
+					TabControl1.SelectedIndex = tabItems.Count - 1;
+					LoadXamlPackage(defaultFolder + "\\" + t.Text);
+					highlightText();
+					
 				}
 			}
 			lastSender = sender;
@@ -263,6 +276,41 @@ namespace Noteorious.Rich_text_controls
 
 			}
 			
+		}
+
+		private void highlightText()
+		{
+			TextRange textRange = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
+			TextPointer text = textRange.Start.GetInsertionPosition(LogicalDirection.Forward);
+			Trace.WriteLine(matchedText);
+			while (text != null)
+			{
+				String temptext = text.GetTextInRun(LogicalDirection.Forward);
+				if (!string.IsNullOrWhiteSpace(temptext) && matchedText != "")
+				{
+					int index = temptext.IndexOf(matchedText);
+					
+					if (index != -1)
+					{
+						Trace.WriteLine(index);
+						Trace.WriteLine(matchedText.Length);
+						Trace.WriteLine("Highlighted");
+						TextPointer selectionStart = text.GetPositionAtOffset(index, LogicalDirection.Forward);
+						TextPointer selectionEnd = selectionStart.GetPositionAtOffset(matchedText.Length, LogicalDirection.Forward);
+						TextRange selection = new TextRange(selectionStart, selectionEnd);
+						selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+						selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Yellow);
+						//activeBox.SelectionBrush = Brushes.Yellow;
+						activeBox.Selection.Select(selection.Start, selection.End);
+						
+						
+					}
+				}
+				text = text.GetNextContextPosition(LogicalDirection.Forward);
+				matchedText = "";
+			}
+			
+
 		}
 
 		public List<String> getNotes ()
@@ -521,6 +569,8 @@ namespace Noteorious.Rich_text_controls
 					string nototext = LoadSearchFiles(notofile); // Load the file (XamlPackage) to get its text
 					if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
 					{
+						
+						matchedText = searchtxt;
 						// Get file info
 						var notofileinfo = new FileInfo(notofile);
 
@@ -560,11 +610,11 @@ namespace Noteorious.Rich_text_controls
 
 		private void EndSearch()
 		{
-			Keyboard.ClearFocus();
-			treeView.Focus();
 			txtSearchBox.Text = " Search Notes...";
 			treeView.Visibility = Visibility.Visible;
 			searchView.Visibility = Visibility.Collapsed;
+			Keyboard.ClearFocus();
+			treeView.Focus();
 			searchView.Items.Clear();
 		}
 
