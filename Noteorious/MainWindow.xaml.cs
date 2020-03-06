@@ -368,7 +368,8 @@ namespace Noteorious.Rich_text_controls
 				var range = new TextRange(dummybox.Document.ContentStart, dummybox.Document.ContentEnd);
 				var fStream = new FileStream(filePath, FileMode.OpenOrCreate);
 				range.Load(fStream, DataFormats.XamlPackage);
-				Debug.WriteLine("[" + filePath + "]: " + range.Text);
+
+				// Debug.WriteLine("[" + filePath + "]: " + range.Text); // Test output showing text found in each loaded file, delete later
 
 				fStream.Close();
 
@@ -415,6 +416,7 @@ namespace Noteorious.Rich_text_controls
 
 			// After loading, add file system to tree view
 			treeView.Items.Add(fileSystemObject);
+
 		}
 
 		private void FileSystemObject_AfterExplore(object sender, System.EventArgs e)
@@ -541,6 +543,16 @@ namespace Noteorious.Rich_text_controls
 									Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Prints (the same thing) as string
 								}
 								break;
+							case "pnf": // Print Noto Files:
+								foreach (FileSystemObjectInfo Pdirectory in treeView.Items)
+								{
+									string[] files = System.IO.Directory.GetFiles(Pdirectory.FileSystemInfo.ToString(), "*.noto");
+									foreach (var notofile in files) // for each located noto file
+									{
+										Debug.WriteLine(notofile);
+									}
+								}
+								break;
 							default: // No recognized command entered:
 								ActivateSearch(tb1.Text); // Do regular search
 								break;
@@ -558,12 +570,14 @@ namespace Noteorious.Rich_text_controls
 
 		private void ActivateSearch(string searchtxt)
 		{
-			searchView.Items.Clear();
+			Cursor = Cursors.Wait; // Set loading cursor before everything begins
+
+			searchView.Items.Clear(); // Clear search in case you didnt empty the text box (which clears) before searching again (?)
+
 			foreach (MyTabItem t in tabItems)
 			{
 				t.Content.dehighlightSections();
 			}
-			Cursor = Cursors.Wait; // Set loading cursor before everything begins
 			treeView.Visibility = Visibility.Hidden;        // Hide project folders
 			searchView.Visibility = Visibility.Visible;     // Show search files
 			Image i = new Image();
@@ -576,22 +590,57 @@ namespace Noteorious.Rich_text_controls
 			i.HorizontalAlignment = HorizontalAlignment.Right;
 			i.Visibility = Visibility.Visible;
 			txtSearchBG.Children.Add(i);
+
+			
+
+			// Set variables for priority search list. Priority is given to titles matching search text then number of times file content has a match with the search text
+			bool matchfound = false;
+			//SortedDictionary<int, string> filemap = new SortedDictionary<int, string>(); // Create map-like object to track list order of files
+			//List<Tuple<int, string>> filemap = new List<Tuple<int, string>>();
+
+			var filemap = new List<Tuple<int, string>>();
+
 			foreach (FileSystemObjectInfo Pdirectory in treeView.Items) // For every project folder added to tree view
 			{
-				Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Console printing of directories (paths) in treeview, delete later
+				// Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Console printing of directories (paths) in treeview, delete later
 
-				
 				string[] files = System.IO.Directory.GetFiles(Pdirectory.FileSystemInfo.ToString(), "*.noto");
 
-				foreach (var notofile in files) // for each located noto file
+				foreach (string notofile in files) // for each located noto file (notofile = file path string)
 				{
 					string nototext = LoadSearchFiles(notofile); // Load the file (XamlPackage) to get its text
-					if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
+
+					// Get file name by finding text after the last '\'
+					string[] splitnotopath = notofile.Split('\\'); // Split file path by '\'
+					string notofilename = (splitnotopath[splitnotopath.Length - 1]); // Filename is everything after the last '\' (last element of new array)
+					notofilename = notofilename.Substring(0, notofilename.Length - 5); // Remove the file extension (i.e. remove last 5 characters: '.noto')
+
+					if (notofilename.Contains(searchtxt)) // If file name (TITLE) contains searched text (prioritises matched titles)
 					{
-						
+						matchfound = true;
+
+						filemap.Add(new Tuple<int,string>(99999, notofile));
+					}
+					else if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
+					{
+						matchfound = true;
 						matchedText = searchtxt;
+
+						int matchcount = Regex.Matches(nototext, searchtxt).Count;
+
+						filemap.Add(new Tuple<int, string>(matchcount, notofile)); // Give content matched files priority equal to number of matches found
+					}
+				}
+
+				if (matchfound)
+				{
+					// Sort filemap by key (Chronologically)
+					var orderedmap = filemap.OrderByDescending(t => t.Item1).ToList();
+
+					foreach (var orderedfile in orderedmap)
+					{
 						// Get file info
-						var notofileinfo = new FileInfo(notofile);
+						var notofileinfo = new FileInfo(orderedfile.Item2);
 
 						// Create file system object with file info (have to feed file system object into items.add)
 						var fileSystemObject = new FileSystemObjectInfo(notofileinfo);
@@ -599,32 +648,10 @@ namespace Noteorious.Rich_text_controls
 						// Add file system object to the search results tree view
 						searchView.Items.Add(fileSystemObject);
 					}
+
 				}
 			}
 			highlightText();
-
-			/* // Seraching just through documents folder (left here for reference, delete later)
-			 * 
-			string[] files = System.IO.Directory.GetFiles(defaultFolder, "*.noto");
-
-			foreach (var notofile in files) // for each located noto file
-			{
-				string nototext = LoadSearchFiles(notofile); // Load the file (XamlPackage) to get its text
-				if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
-				{
-					// Get file info
-					var notofileinfo = new FileInfo(notofile);
-
-					// Create file system object with file info (have to feed file system object into items.add)
-					var fileSystemObject = new FileSystemObjectInfo(notofileinfo);
-
-					// Add file system object to the search results tree view
-					searchView.Items.Add(fileSystemObject);
-				}
-			}
-
-			*/
-
 			Cursor = Cursors.Arrow; // Set normal cursor once files loaded and finished
 		}
 

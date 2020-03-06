@@ -59,9 +59,9 @@
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add project folder..." Click="Pfolder_open"/>
-                    <MenuItem Header="Remove docs folder (not working)" Click="Pfolder_close"/>
+                    <!--<MenuItem Header="Remove docs folder (not working)" Click="Pfolder_close"/>-->
                     <MenuItem Header="Clear all project folders" Click="Pfolder_clear"/>
-                    <MenuItem Header="Test hide" Click="Pfolder_hide"/>
+                    <!--<MenuItem Header="Test hide" Click="Pfolder_hide"/>-->
                 </ContextMenu>
             </TreeView.ContextMenu>
             <TreeView.ItemContainerStyle>
