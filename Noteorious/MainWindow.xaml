@@ -125,10 +125,10 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="TabItem">
-                                <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#6da03c" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
-                                    <StackPanel Orientation="Horizontal" Margin="6,4,6,4">
-                                        <Label Grid.Row="0" Name="Text" Foreground="Black" FontSize="10" Content="{Binding Header}"/>
-                                        <Image Name="img" Height="15" Width="15" Margin="10,0,0,20" Source="close2.png" MouseUp="close_MouseUp"/>
+                                <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#6da03c" CornerRadius="4,4,0,0" Padding="0,0,0,0" Margin="2,0,8,0">
+                                    <StackPanel Orientation="Horizontal" Margin="5,0,2,0">
+                                        <Label Grid.Row="0" Name="Text" Foreground="Black" FontSize="12" Content="{Binding Header}"/>
+                                        <Image Name="img" Height="15" Width="15" Margin="2,0,2,0" Source="close2.png" MouseUp="close_MouseUp"/>
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -143,13 +143,13 @@
                                         </Setter>
                                         <Setter TargetName="Text" Property="TextBlock.Foreground" Value="Black"/>
                                         <Setter TargetName="Text" Property="TextBlock.FontWeight" Value="Bold"/>
-                                        <Setter TargetName="Text" Property="Margin" Value="2,1,1,1"/>
-                                        <Setter TargetName="Border" Property="Margin" Value="-2,1,-2,-4"/>
+                                        <Setter TargetName="Text" Property="Margin" Value="0,0,0,0"/>
+                                        <Setter TargetName="Border" Property="Margin" Value="-2,1,2,-4"/>
                                         <Setter TargetName="Border" Property="Padding" Value="1"/>
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
                                         <Setter TargetName="Text" Property="TextBlock.Foreground" Value="white"/>
-                                        <Setter TargetName="Text" Property="Margin" Value="2,1,1,1"/>
+                                        <Setter TargetName="Text" Property="Margin" Value="2,1,2,-4"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
