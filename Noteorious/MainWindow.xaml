@@ -9,7 +9,10 @@
         xmlns:local="clr-namespace:Noteorious.Rich_text_controls"
         mc:Ignorable="d"
         Icon="N_Logo_Icon.ico"
-        Title="Noteorious" Height="720" Width="1280">
+        Title="Noteorious"
+        Height="720" Width="1280"
+        Left="20" Top="20"
+        MouseDown="Window_MouseDownHandler">
 
 
     <!--    [Example_Comment_Block_Header]    -->
@@ -19,8 +22,8 @@
         <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
     </Window.CommandBindings>
-    <DockPanel Background="#202020">
-        <ToolBar DockPanel.Dock="Top" Background="#000000" Name="toolbar">
+    <DockPanel Background="#202020" Name="DockPanelBG" Focusable="True">
+        <ToolBar DockPanel.Dock="Top" Background="#000000" Name="toolbar" Focusable="True" PreviewMouseDown="Window_MouseDownHandler">
             <Image Source="images/NoteoriousLogo.png" Width="200" Height="40" Margin ="0, 2, 7, 2" />
             <!--icons - adding to the repos/noteorious?-->
             <Button Name="btnNewNote" Click="btnNewNote_MouseUp" ToolTip="New Note">
@@ -82,7 +85,7 @@
 
         <!--    [Search Text Box]    -->
         <Grid x:Name="txtSearchBG" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Margin="-205,12.2,0,0" DockPanel.Dock="Top">
-            <TextBox Text=" Search Notes..." Width="200" x:Name="txtSearchBox" Background="Transparent" GotFocus="SearchBoxTextFocus" LostFocus="SearchBoxLostFocus" KeyDown="KeyDownHandler">
+            <TextBox Text=" Search Notes..." Width="200" x:Name="txtSearchBox" Background="Transparent" GotFocus="SearchBoxTextFocus" LostFocus="SearchBoxLostFocus" KeyDown="Search_KeyDownHandler">
                 <TextBox.ContextMenu>
                     <ContextMenu Name="SearchContext">
                         <MenuItem Header="Clear Search" Click="SearchResults_clear"/>
@@ -92,8 +95,7 @@
         </Grid>
 
         <!--    [Search Results File Tree]    -->
-        <!--<TreeView Name="treeView" Margin="10,50.2,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Visible" Height="580.8">-->
-        <TreeView Name="searchView" Margin="-205,20,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed" Height="580.8">
+        <TreeView Name="searchView" Margin="-205,18,5,10.4" Width="200" HorizontalAlignment="Left" Background="#000000" BorderBrush="Black" Visibility="Collapsed" Height="580.8">
             <TreeView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Clear Search" Click="SearchResults_clear"/>

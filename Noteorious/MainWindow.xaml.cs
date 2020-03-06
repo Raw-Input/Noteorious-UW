@@ -23,6 +23,7 @@ namespace Noteorious.Rich_text_controls
 		public RichTextBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
 		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>(); // stores a list of all the tabs currently loaded by the program
 		public String defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //  where the app will save and load notes from 
+		public bool debugging = true;
 
 		public int clickCount = 0; // controls the click count for file tree objects
 		public object lastSender = null;
@@ -303,6 +304,26 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
+		private String LoadSearchFiles(string filePath)
+		{
+			if (File.Exists(filePath))
+			{
+				RichTextBox dummybox = new RichTextBox();
+				var range = new TextRange(dummybox.Document.ContentStart, dummybox.Document.ContentEnd);
+				var fStream = new FileStream(filePath, FileMode.OpenOrCreate);
+				range.Load(fStream, DataFormats.XamlPackage);
+				Debug.WriteLine("[" + filePath + "]: " + range.Text);
+
+				fStream.Close();
+
+				return range.Text;
+			}
+			else
+			{
+				Debug.WriteLine("[ERROR file not loaded fixme");
+				return "";
+			}
+		}
 
 		// Fires when the Font Selection box is changed
 		private void cmbFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -323,12 +344,12 @@ namespace Noteorious.Rich_text_controls
 		// File tree methods (and cursor type methods)
 		private void InitializeFileSystemObjects()
 		{ 
-			// Get path to system's documents folder
+			// Get path to default folder (set to documents by default)
 			var docspath = defaultFolder;
-			// Get folder info for stored system's documents folder
+			// Get folder info for default folder
 			var docsfolderinfo = new DirectoryInfo(docspath);
 
-			// Establish file tree only with established documents folder
+			// Create file system object with default folder info (have to feed file system object into items.add)
 			var fileSystemObject = new FileSystemObjectInfo(docsfolderinfo);
 
 
@@ -338,7 +359,6 @@ namespace Noteorious.Rich_text_controls
 
 			// After loading, add file system to tree view
 			treeView.Items.Add(fileSystemObject);
-			//treeView.Items.Remove(fileSystemObject);
 		}
 
 		private void FileSystemObject_AfterExplore(object sender, System.EventArgs e)
@@ -380,6 +400,8 @@ namespace Noteorious.Rich_text_controls
 		// Triggers from xaml right click context menu on file tree -> when user selects "close docs folder"
 		private void Pfolder_close(object sender, RoutedEventArgs e)
 		{
+			// NOT WORKING, WIP
+			/*
 			// Get path to system's documents folder
 			var docspath = defaultFolder;
 			// Get folder info for stored system's documents folder
@@ -394,6 +416,7 @@ namespace Noteorious.Rich_text_controls
 
 			// After loading, add file system to tree view
 			treeView.Items.Remove(fileSystemObject);
+			*/
 		}
 
 		// Search box methods
@@ -410,16 +433,12 @@ namespace Noteorious.Rich_text_controls
 
 		private void SearchResults_clear(object sender, RoutedEventArgs e)
 		{
-			treeView.Focus();
-			txtSearchBox.Text = " Search Notes...";
-			treeView.Visibility = Visibility.Visible;
-			searchView.Visibility = Visibility.Collapsed;
+			// Purpose of having 2 methods where this one just calls the other is so EndSearch can be called without input objects sender/eventargs
+			EndSearch(); // Handles text box, clearing search tree, tree view visibilities, etc
 		}
 
 		private void SearchBoxTextFocus(object sender, RoutedEventArgs e)
 		{
-			// treeView.Visibility = Visibility.Visible;
-
 			var tb1 = sender as TextBox;
 			if (tb1.Text == " Search Notes...")
 			{
@@ -439,83 +458,119 @@ namespace Noteorious.Rich_text_controls
 			}
 			else // Search box has text in it
 			{
-				treeView.Visibility = Visibility.Hidden;		// Hide project folders
-				searchView.Visibility = Visibility.Visible;		// Show search files
+				// Do nothing; Should only be activated by user pressing enter, not just typing something then leaving the box
 			}
 		}
 
 		// User pressed enter in the text box
-		private void KeyDownHandler(object sender, KeyEventArgs e)
+		private void Search_KeyDownHandler(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Return) // Enter/Return is pressed in the text box
 			{
-				Debug.WriteLine("Enter has been pressed in the search box"); // Test console output (remove later)
-
 				var tb1 = sender as TextBox;
 				if (tb1.Text == "") // Search box has been cleared (left blank)
 				{
-					
-					tb1.Text = " Search Notes...";
-					searchView.Visibility = Visibility.Collapsed;   // Hide search files
-					treeView.Focus();
-					treeView.Visibility = Visibility.Visible;       // Show project folders
+					EndSearch(); // Handles text box, clearing search tree, tree view visibilities, etc
 				}
 				else // Search box has text in it (activate search)
 				{
-					treeView.Visibility = Visibility.Hidden;        // Hide project folders
-					searchView.Visibility = Visibility.Visible;     // Show search files
-					ActivateSearch(tb1.Text);
+					if (debugging) // If debugging property is enabled
+					{ 
+						switch (tb1.Text) // Input commands into search box for debugging
+						{
+							case "pi": // Print items:
+								foreach (FileSystemObjectInfo Pdirectory in treeView.Items)
+								{
+									Debug.WriteLine(Pdirectory.FileSystemInfo); // Prints as file system info
+									Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Prints (the same thing) as string
+								}
+								break;
+							default: // No recognized command entered:
+								ActivateSearch(tb1.Text); // Do regular search
+								break;
+						}
+					}
+					else // Not debugging
+					{
+						ActivateSearch(tb1.Text); // Do regular search
+					}
 				}
 			}
+		}
+
+		private void Window_MouseDownHandler(object sender, MouseButtonEventArgs e)
+		{
+			DockPanelBG.Focus();
 		}
 
 		private void ActivateSearch(string searchtxt)
 		{
-			Debug.WriteLine("[Search text]: " + searchtxt); // Test console output (remove later)
+			Cursor = Cursors.Wait; // Set loading cursor before everything begins
+			treeView.Visibility = Visibility.Hidden;        // Hide project folders
+			searchView.Visibility = Visibility.Visible;     // Show search files
 
-
-			string[] files = System.IO.Directory.GetFiles(defaultFolder, "*.noto"); // Sett to check default folder [CHANGE LATER to all project folders]
-
-
-			Debug.WriteLine("[Files found to search through]:"); // Test console output (remove later)
-			foreach (var notofile in files) // Test console output (remove later)
+			foreach (FileSystemObjectInfo Pdirectory in treeView.Items) // For every project folder added to tree view
 			{
-				Debug.WriteLine(notofile.ToString());
-			}
-			// Debug.WriteLine(files); // Test console output (remove later)
+				Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Console printing of directories (paths) in treeview, delete later
 
-			var dog = true;
-			if (dog)
-			{
-				foreach (var notofile in files)
+				
+				string[] files = System.IO.Directory.GetFiles(Pdirectory.FileSystemInfo.ToString(), "*.noto");
+
+				foreach (var notofile in files) // for each located noto file
 				{
-					// Debug.WriteLine("[Trying '" + notofile + "']"); // Test console output (remove later)
-					try
-					{   // Open the text file using a stream reader.
-						Debug.WriteLine("[Trying '" + notofile + "']"); // Test console output (remove later)
-
-						string teststring = File.ReadAllText(notofile);
-
-						Debug.WriteLine(teststring);
-
-						/*
-						using (StreamReader sr = new StreamReader(notofile))
-						{
-							// Read the stream to a string, and write the string to the console.
-							String line = sr.ReadToEnd();
-							Debug.WriteLine(line);
-						}
-						*/
-					}
-					catch (IOException e)
+					string nototext = LoadSearchFiles(notofile); // Load the file (XamlPackage) to get its text
+					if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
 					{
-						Debug.WriteLine("[Error with file '" + notofile + "']"); // Test console output (remove later)
-						Debug.WriteLine("[Error reading a file]: " + e.Message);
+						// Get file info
+						var notofileinfo = new FileInfo(notofile);
+
+						// Create file system object with file info (have to feed file system object into items.add)
+						var fileSystemObject = new FileSystemObjectInfo(notofileinfo);
+
+						// Add file system object to the search results tree view
+						searchView.Items.Add(fileSystemObject);
 					}
 				}
 			}
 
+			/* // Seraching just through documents folder (left here for reference, delete later)
+			 * 
+			string[] files = System.IO.Directory.GetFiles(defaultFolder, "*.noto");
+
+			foreach (var notofile in files) // for each located noto file
+			{
+				string nototext = LoadSearchFiles(notofile); // Load the file (XamlPackage) to get its text
+				if (nototext.Contains(searchtxt)) // If the text in a file contains the user searched text
+				{
+					// Get file info
+					var notofileinfo = new FileInfo(notofile);
+
+					// Create file system object with file info (have to feed file system object into items.add)
+					var fileSystemObject = new FileSystemObjectInfo(notofileinfo);
+
+					// Add file system object to the search results tree view
+					searchView.Items.Add(fileSystemObject);
+				}
+			}
+
+			*/
+
+			Cursor = Cursors.Arrow; // Set normal cursor once files loaded and finished
 		}
 
+		private void EndSearch()
+		{
+			Keyboard.ClearFocus();
+			treeView.Focus();
+			txtSearchBox.Text = " Search Notes...";
+			treeView.Visibility = Visibility.Visible;
+			searchView.Visibility = Visibility.Collapsed;
+			searchView.Items.Clear();
+		}
+
+		private void Toolbar_MouseDownHandler(object sender, MouseButtonEventArgs e)
+		{
+			toolbar.Focus();
+		}
 	}
 }
