@@ -14,13 +14,16 @@ using Noteorious.ShellClasses;
 using swf = System.Windows.Forms;
 using System.Collections;
 using System.Windows.Data;
+using System.Windows.Threading;
+using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
 
 namespace Noteorious.Rich_text_controls
 {
 	
 	public partial class RichTextEditorSample : Window
 	{
-		public RichTextBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
+		public SpecialBox activeBox; // this is a copy of the current Rich Text Box that is currently selected, should only be used for reading from the box
 		ObservableCollection<MyTabItem> tabItems = new ObservableCollection<MyTabItem>(); // stores a list of all the tabs currently loaded by the program
 		public String defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //  where the app will save and load notes from 
 		public String matchedText = "";
@@ -217,16 +220,12 @@ namespace Noteorious.Rich_text_controls
 					LoadXamlPackage(defaultFolder + "\\" + t.Text);
 				} else if (clickCount % 2 == 0)
 				{
-					
 					StackPanel s = (StackPanel)sender;
 					TextBlock t = (TextBlock)s.Children[1];
 					addTab(t.Text.Substring(0, t.Text.Length - 5));
 					TabControl1.SelectedIndex = tabItems.Count - 1;
 					LoadXamlPackage(defaultFolder + "\\" + t.Text);
 					highlightText();
-					Keyboard.ClearFocus();
-					Keyboard.Focus(activeBox);
-					
 				}
 			}
 			lastSender = sender;
@@ -286,31 +285,39 @@ namespace Noteorious.Rich_text_controls
 			TextRange textRange = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
 			TextPointer text = textRange.Start.GetInsertionPosition(LogicalDirection.Forward);
 			Trace.WriteLine(matchedText);
+			ObservableCollection<TextRange> allMatches = new ObservableCollection<TextRange>();
 			while (text != null)
 			{
 				String temptext = text.GetTextInRun(LogicalDirection.Forward);
 				if (!string.IsNullOrWhiteSpace(temptext) && matchedText != "")
 				{
 					int index = temptext.IndexOf(matchedText);
-					
-					if (index != -1)
+					MatchCollection matches = Regex.Matches(temptext, matchedText);
+					foreach (Match m in matches)
 					{
-						Trace.WriteLine(index);
-						Trace.WriteLine(matchedText.Length);
-						Trace.WriteLine("Highlighted");
-						TextPointer selectionStart = text.GetPositionAtOffset(index, LogicalDirection.Forward);
-						TextPointer selectionEnd = selectionStart.GetPositionAtOffset(matchedText.Length, LogicalDirection.Forward);
-						TextRange selection = new TextRange(selectionStart, selectionEnd);
-						selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-						selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Yellow);
-						Trace.WriteLine(selection.Text);
-						//activeBox.SelectionBrush = Brushes.Yellow;
-						activeBox.Selection.Select(selection.Start, selection.End);
+						if (index != -1)
+						{
+							TextPointer selectionStart = text.GetPositionAtOffset(m.Index, LogicalDirection.Forward);
+							TextPointer selectionEnd = selectionStart.GetPositionAtOffset(matchedText.Length, LogicalDirection.Forward);
+							TextRange selection = new TextRange(selectionStart, selectionEnd);
+							allMatches.Add(selection);
+							//selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+							//selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Yellow);
+							//activeBox.SelectionBrush = Brushes.Yellow;
+							//Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(delegate () 
+							//{
+							//	activeBox.Focus();         // Set Logical Focus
+							//	Keyboard.Focus(activeBox); // Set Keyboard Focus
+							//}));
+							//activeBox.Selection.Select(selection.Start, selection.End);
+						}
 					}
+					
 				}
 				text = text.GetNextContextPosition(LogicalDirection.Forward);
 			}
-			matchedText = "";
+			activeBox.AdditionalRanges = allMatches;
+			activeBox.highlightSections();
 		}
 
 		public List<String> getNotes ()
@@ -324,6 +331,7 @@ namespace Noteorious.Rich_text_controls
 		// saves the current tab's rich text box to a specified filepath
 		private void SaveXamlPackage(string filePath)
 		{
+			EndSearch();
 			var range = new TextRange(activeBox.Document.ContentStart, activeBox.Document.ContentEnd);
 			var fStream = new FileStream(filePath, FileMode.Create);
 			range.Save(fStream, DataFormats.XamlPackage);
@@ -356,7 +364,7 @@ namespace Noteorious.Rich_text_controls
 		{
 			if (File.Exists(filePath))
 			{
-				RichTextBox dummybox = new RichTextBox();
+				SpecialBox dummybox = new SpecialBox();
 				var range = new TextRange(dummybox.Document.ContentStart, dummybox.Document.ContentEnd);
 				var fStream = new FileStream(filePath, FileMode.OpenOrCreate);
 				range.Load(fStream, DataFormats.XamlPackage);
@@ -553,7 +561,16 @@ namespace Noteorious.Rich_text_controls
 			Cursor = Cursors.Wait; // Set loading cursor before everything begins
 			treeView.Visibility = Visibility.Hidden;        // Hide project folders
 			searchView.Visibility = Visibility.Visible;     // Show search files
-
+			Image i = new Image();
+			i.Source = new BitmapImage(new Uri(@"close2.png", UriKind.Relative));
+			i.Name = "img2";
+			i.Height = 15;
+			i.Width = 15;
+			i.Margin = new Thickness(0);
+			i.MouseUp += I_MouseUp;
+			i.HorizontalAlignment = HorizontalAlignment.Right;
+			i.Visibility = Visibility.Visible;
+			txtSearchBG.Children.Add(i);
 			foreach (FileSystemObjectInfo Pdirectory in treeView.Items) // For every project folder added to tree view
 			{
 				Debug.WriteLine(Pdirectory.FileSystemInfo.ToString()); // Console printing of directories (paths) in treeview, delete later
@@ -605,9 +622,20 @@ namespace Noteorious.Rich_text_controls
 			Cursor = Cursors.Arrow; // Set normal cursor once files loaded and finished
 		}
 
+		private void I_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			EndSearch();
+			txtSearchBG.Children.RemoveAt(1);
+			matchedText = "";
+		}
+
 		private void EndSearch()
 		{
 			txtSearchBox.Text = " Search Notes...";
+			foreach(MyTabItem t in tabItems)
+			{
+				t.Content.dehighlightSections();
+			}
 			treeView.Visibility = Visibility.Visible;
 			searchView.Visibility = Visibility.Collapsed;
 			Keyboard.ClearFocus();

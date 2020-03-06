@@ -26,6 +26,7 @@ namespace Noteorious
 
         private String _header; // the tab's header
 
+        
         // sets or gets the tab's header
         public string Header
         {
@@ -39,7 +40,7 @@ namespace Noteorious
         }
 
         // the tab's RichTextBox
-        public RichTextBox Content { get; set; }
+        public SpecialBox Content { get; set; }
 
         // Default constructor takes in no variables and creates a new tab
         public MyTabItem()
@@ -51,7 +52,7 @@ namespace Noteorious
             Header = "New Note";
 
             // Create a RichTextBox for editing text
-            Content = new RichTextBox();
+            Content = new SpecialBox();
             Content.ContextMenu = cm;
             //SolidColorBrush b = (SolidColorBrush)(new BrushConverter().ConvertFrom("#6da03c"));
             Content.BorderThickness = new Thickness(0);
@@ -74,7 +75,7 @@ namespace Noteorious
             Header = s;
 
             // Create a RichTextBox for editing text
-            Content = new RichTextBox();
+            Content = new SpecialBox();
             Content.ContextMenu = cm;
             //SolidColorBrush b = (SolidColorBrush)(new BrushConverter().ConvertFrom("#6da03c"));
             Content.BorderThickness = new Thickness(0);
