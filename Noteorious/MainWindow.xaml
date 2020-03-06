@@ -12,7 +12,7 @@
         Title="Noteorious"
         Height="720" Width="1280"
         Left="20" Top="20"
-        MouseDown="Window_MouseDownHandler">
+        >
 
 
     <!--    [Example_Comment_Block_Header]    -->
@@ -23,20 +23,20 @@
         <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
     </Window.CommandBindings>
     <DockPanel Background="#202020" Name="DockPanelBG" Focusable="True">
-        <ToolBar DockPanel.Dock="Top" Background="#000000" Name="toolbar" Focusable="True" PreviewMouseDown="Window_MouseDownHandler">
+        <ToolBar DockPanel.Dock="Top" Background="#000000" Name="toolbar" Focusable="True">
             <Image Source="images/NoteoriousLogo.png" Width="200" Height="40" Margin ="0, 2, 7, 2" />
             <!--icons - adding to the repos/noteorious?-->
             <Button Name="btnNewNote" Click="btnNewNote_MouseUp" ToolTip="New Note">
-                <Image Source="newnote.png" Width="30" Height="30" />
+                <Image Source="newNewNote.png" Width="30" Height="30" />
             </Button>
             <Button Command="ApplicationCommands.Open" ToolTip="Open Note">
-                <Image Source="images/file.png" Width="35" Height="35" />
+                <Image Source="newOpen.png" Width="30" Height="30" />
             </Button>
             <Button Command="ApplicationCommands.Save" ToolTip="Save Note">
                 <Image Source="saveicon.png" Width="25" Height="25"  />
             </Button>
             <Button Name ="btnSaveAs" Click="btnSaveAs_MouseUp" ToolTip="Save Note As">
-                <Image Source="saveas.png" Width="25" Height="25"  />
+                <Image Source="newSaveAs.png" Width="25" Height="25"  />
             </Button>
             <Separator Margin="10,0,10,0"/>
             <ToggleButton Command="EditingCommands.ToggleBold" Name="btnBold">
@@ -119,16 +119,15 @@
         </TreeView>
 
         <!--    [Text & Tabs Block]    -->
-        <TabControl x:Name="TabControl1" Margin="5,10,10,10" SelectionChanged="TabControl_SelectionChanged" Background="white" RenderTransformOrigin="0.5,0.5" Width="Auto" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="#6da03c" BorderThickness="4">
+        <TabControl x:Name="TabControl1" Margin="5,-25,10,10" SelectionChanged="TabControl_SelectionChanged" Background="white" RenderTransformOrigin="0.5,0.5" Width="Auto" DockPanel.Dock="Right" HorizontalAlignment="Right" BorderBrush="#6da03c" BorderThickness="4">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">
                         <Setter.Value>
-
                             <ControlTemplate TargetType="TabItem">
                                 <Border Name="Border" BorderThickness="4,4,4,0" BorderBrush="#6da03c" CornerRadius="4,4,0,0" Padding="6,4,6,4" Margin="6,0">
                                     <StackPanel Orientation="Horizontal" Margin="6,4,6,4">
-                                        <Label Grid.Row="0" Name="Text" Foreground="Black" Content="{Binding Header}"/>
+                                        <Label Grid.Row="0" Name="Text" Foreground="Black" FontSize="10" Content="{Binding Header}"/>
                                         <Image Name="img" Height="15" Width="15" Margin="10,0,0,20" Source="close2.png" MouseUp="close_MouseUp"/>
                                     </StackPanel>
                                 </Border>
@@ -157,7 +156,6 @@
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Content" Value="{Binding Content}" />
-                    
                 </Style>
             </TabControl.Resources>
         </TabControl>

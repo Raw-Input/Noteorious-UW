@@ -224,6 +224,8 @@ namespace Noteorious.Rich_text_controls
 					TabControl1.SelectedIndex = tabItems.Count - 1;
 					LoadXamlPackage(defaultFolder + "\\" + t.Text);
 					highlightText();
+					Keyboard.ClearFocus();
+					Keyboard.Focus(activeBox);
 					
 				}
 			}
@@ -233,6 +235,7 @@ namespace Noteorious.Rich_text_controls
 		// Handles when the font changes via the selection box
 		private void rtbEditor_SelectionChanged(object sender, RoutedEventArgs e)
 		{
+			
 			object temp = activeBox.Selection.GetPropertyValue(Inline.FontWeightProperty);
 			btnBold.IsChecked = (temp != DependencyProperty.UnsetValue) && (temp.Equals(FontWeights.Bold));
 			temp = activeBox.Selection.GetPropertyValue(Inline.FontStyleProperty);
@@ -300,17 +303,14 @@ namespace Noteorious.Rich_text_controls
 						TextRange selection = new TextRange(selectionStart, selectionEnd);
 						selection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
 						selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Yellow);
+						Trace.WriteLine(selection.Text);
 						//activeBox.SelectionBrush = Brushes.Yellow;
 						activeBox.Selection.Select(selection.Start, selection.End);
-						
-						
 					}
 				}
 				text = text.GetNextContextPosition(LogicalDirection.Forward);
-				matchedText = "";
 			}
-			
-
+			matchedText = "";
 		}
 
 		public List<String> getNotes ()
@@ -546,10 +546,7 @@ namespace Noteorious.Rich_text_controls
 			}
 		}
 
-		private void Window_MouseDownHandler(object sender, MouseButtonEventArgs e)
-		{
-			DockPanelBG.Focus();
-		}
+		
 
 		private void ActivateSearch(string searchtxt)
 		{

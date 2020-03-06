@@ -36,7 +36,10 @@
     <None Remove="images\underlineicon.PNG" />
     <None Remove="italic.png" />
     <None Remove="italicicon.PNG" />
+    <None Remove="newNewNote.png" />
     <None Remove="newnote.png" />
+    <None Remove="newOpen.png" />
+    <None Remove="newSaveAs.png" />
     <None Remove="N_Logo_Icon.ico" />
     <None Remove="save.png" />
     <None Remove="saveas.png" />
@@ -100,7 +103,16 @@
     <Resource Include="italicicon.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="newNewNote.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="newnote.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="newOpen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="newSaveAs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="N_Logo_Icon.ico">
