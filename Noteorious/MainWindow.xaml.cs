@@ -558,6 +558,11 @@ namespace Noteorious.Rich_text_controls
 
 		private void ActivateSearch(string searchtxt)
 		{
+			searchView.Items.Clear();
+			foreach (MyTabItem t in tabItems)
+			{
+				t.Content.dehighlightSections();
+			}
 			Cursor = Cursors.Wait; // Set loading cursor before everything begins
 			treeView.Visibility = Visibility.Hidden;        // Hide project folders
 			searchView.Visibility = Visibility.Visible;     // Show search files
@@ -596,6 +601,7 @@ namespace Noteorious.Rich_text_controls
 					}
 				}
 			}
+			highlightText();
 
 			/* // Seraching just through documents folder (left here for reference, delete later)
 			 * 
