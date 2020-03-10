@@ -22,6 +22,8 @@ namespace Noteorious
 
         public event EventHandler<Hyperlink> NoteLinkUpdate; // Event handler for adding a hyperlink
 
+        public event EventHandler<SpecialBox> TextClick; // Event handler for adding a hyperlink
+
         public event PropertyChangedEventHandler PropertyChanged; // Event handler for changing the tab header via opening a file
 
         private String _header; // the tab's header
@@ -62,6 +64,7 @@ namespace Noteorious
             // allows hyperlinks to function
             Content.IsDocumentEnabled = true;
 
+            Content.MouseDown += (sendingelement, eventargs) => tUpdate(Content, eventargs);
 
         }
 
@@ -84,6 +87,8 @@ namespace Noteorious
 
             // Allows hyperlinks to function
             Content.IsDocumentEnabled = true;
+
+            Content.MouseDown += (sendingelement, eventargs) => tUpdate(Content, eventargs);
         }
 
 
@@ -91,6 +96,11 @@ namespace Noteorious
         {
             // Create Context menu for the RichTextBox
             ContextMenu cm = new ContextMenu();  // make a context menu
+
+            // add default behaviors for cut copy paste
+            cm.Items.Add(new MenuItem() { Header = "Cut", Command = ApplicationCommands.Cut });
+            cm.Items.Add(new MenuItem() { Header = "Copy", Command = ApplicationCommands.Copy });
+            cm.Items.Add(new MenuItem() { Header = "Paste", Command = ApplicationCommands.Paste });
 
             // Create make new note context menu button
             MenuItem mkNewnote = new MenuItem();
@@ -104,7 +114,6 @@ namespace Noteorious
             lnkNote.Items.Add(new MenuItem());
             cm.Items.Add(lnkNote);
             lnkNote.SubmenuOpened += (sendingelement, eventargs) => cUpdate(lnkNote, eventargs);
-
 
             //foreach ()
 
@@ -132,6 +141,17 @@ namespace Noteorious
                 item.Items.Add(newItem);
             }
             
+        }
+
+        // Handles context menu events
+        public void tUpdate(SpecialBox item, EventArgs e)
+        {
+
+            if (TextClick != null)
+            {
+                TextClick(this, item);
+            }
+
         }
 
         // Handles context menu events

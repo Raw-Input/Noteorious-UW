@@ -56,6 +56,7 @@ namespace Noteorious.Rich_text_controls
 			MyTabItem newTab = new MyTabItem();
 			newTab.ContextMenuUpdate += HandleContextMenu; // event handler
 			newTab.NoteLinkUpdate += HandleNoteLink; // event handler
+			newTab.TextClick += HandleTextUpdate; // event handler
 			tabItems.Add(newTab); // add to collection
 		}
 
@@ -65,7 +66,8 @@ namespace Noteorious.Rich_text_controls
 			s = s.Trim();
 			MyTabItem newTab = new MyTabItem(s); 
 			newTab.ContextMenuUpdate += HandleContextMenu; // event handler
-			newTab.NoteLinkUpdate += HandleNoteLink; // event handler
+			newTab.NoteLinkUpdate += HandleNoteLink;
+			newTab.TextClick += HandleTextUpdate; // event handler
 			tabItems.Add(newTab); // add to collection
 		}
 
@@ -134,6 +136,15 @@ namespace Noteorious.Rich_text_controls
 					tabItems[TabControl1.SelectedIndex].Header = (String)item.Header;
 				}
 			}
+		}
+
+		public void HandleTextUpdate (object sender, SpecialBox b)
+		{
+			Trace.WriteLine("clicked!");
+			var temp = activeBox.CaretPosition.Paragraph.Inlines.FirstInline.Style;
+			//GetPropertyValue(Inline.FontWeightProperty);
+			cmbFontFamily.SelectedItem = temp;
+			
 		}
 
 		// Handles clicking a hyperlink
