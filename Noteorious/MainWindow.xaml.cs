@@ -199,7 +199,7 @@ namespace Noteorious.Rich_text_controls
 		private void btnNewNote_MouseUp(object sender, RoutedEventArgs e)
 		{
 			addTab();
-			TabControl1.SelectedIndex += 1;
+			TabControl1.SelectedIndex = tabItems.Count - 1;
 		}
 
 		// Fires when save as button is clicked
